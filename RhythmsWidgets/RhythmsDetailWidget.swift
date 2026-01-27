@@ -1,0 +1,288 @@
+//
+//  RhythmsDetailWidget.swift
+//  RhythmsWidgets
+//
+//  Created by Cam Frederick on 12/27/25.
+//
+
+import WidgetKit
+import SwiftUI
+
+/// Large widget showing detailed today view with progress and rhythms
+struct RhythmsDetailWidget: Widget {
+    let kind: String = "RhythmsDetailWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: DetailWidgetProvider()) { entry in
+            DetailWidgetView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Rhythms Overview")
+        .description("A complete view of today's rhythms with progress tracking.")
+        .supportedFamilies([.systemLarge])
+    }
+}
+
+// MARK: - Timeline Provider
+
+struct DetailWidgetProvider: TimelineProvider {
+    func placeholder(in context: Context) -> DetailWidgetEntry {
+        DetailWidgetEntry(date: Date(), data: .placeholder)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (DetailWidgetEntry) -> Void) {
+        Task { @MainActor in
+            let data = WidgetDataProvider.shared.fetchTodayData()
+            completion(DetailWidgetEntry(date: Date(), data: data))
+        }
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<DetailWidgetEntry>) -> Void) {
+        Task { @MainActor in
+            let data = WidgetDataProvider.shared.fetchTodayData()
+            let entry = DetailWidgetEntry(date: Date(), data: data)
+
+            // Update every 15 minutes
+            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            completion(timeline)
+        }
+    }
+}
+
+struct DetailWidgetEntry: TimelineEntry {
+    let date: Date
+    let data: TodayWidgetData
+}
+
+// MARK: - Widget View
+
+struct DetailWidgetView: View {
+    var entry: DetailWidgetEntry
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Header with date and progress
+            headerSection
+
+            Divider()
+
+            // Main content
+            if entry.data.rhythms.isEmpty {
+                emptyStateView
+            } else {
+                rhythmsListSection
+            }
+        }
+    }
+
+    // MARK: - Header Section
+
+    private var headerSection: some View {
+        HStack(alignment: .top) {
+            // Date and status
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.data.date.formatted(date: .complete, time: .omitted))
+                    .font(.headline)
+
+                if entry.data.isAllComplete {
+                    Label("All rhythms complete!", systemImage: "star.fill")
+                        .font(.caption)
+                        .foregroundStyle(.yellow)
+                } else if entry.data.remainingCount > 0 {
+                    Text("\(entry.data.remainingCount) rhythm\(entry.data.remainingCount == 1 ? "" : "s") remaining")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer()
+
+            // Progress ring
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 6)
+
+                Circle()
+                    .trim(from: 0, to: entry.data.completionRate)
+                    .stroke(
+                        progressColor,
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+
+                VStack(spacing: 0) {
+                    Text("\(Int(entry.data.completionRate * 100))")
+                        .font(.system(.title3, design: .rounded).bold())
+                    Text("%")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(width: 60, height: 60)
+        }
+    }
+
+    private var progressColor: Color {
+        switch entry.data.completionRate {
+        case 1.0: return .green
+        case 0.75..<1.0: return .mint
+        case 0.5..<0.75: return .yellow
+        case 0.25..<0.5: return .orange
+        default: return .red
+        }
+    }
+
+    // MARK: - Rhythms List Section
+
+    private var rhythmsListSection: some View {
+        VStack(spacing: 8) {
+            // Incomplete rhythms (highlighted)
+            let incompleteRhythms = entry.data.rhythms.filter { !$0.isCompleted }
+            let completedRhythms = entry.data.rhythms.filter { $0.isCompleted }
+
+            if !incompleteRhythms.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("TO DO")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                    ForEach(incompleteRhythms.prefix(4)) { rhythm in
+                        incompleteRhythmRow(rhythm)
+                    }
+
+                    if incompleteRhythms.count > 4 {
+                        Text("+\(incompleteRhythms.count - 4) more")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            if !completedRhythms.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("COMPLETED")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                    ForEach(completedRhythms.prefix(3)) { rhythm in
+                        completedRhythmRow(rhythm)
+                    }
+
+                    if completedRhythms.count > 3 {
+                        Text("+\(completedRhythms.count - 3) more")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func incompleteRhythmRow(_ rhythm: RhythmWidgetItem) -> some View {
+        HStack(spacing: 10) {
+            // Emoji with background
+            Text(rhythm.emoji)
+                .font(.title3)
+                .frame(width: 36, height: 36)
+                .background(Color(hex: rhythm.colorHex)?.opacity(0.15) ?? Color.gray.opacity(0.15))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(rhythm.title)
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(1)
+
+                if let note = rhythm.note {
+                    Text(note)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            // Streak at risk indicator
+            if rhythm.streak > 0 {
+                HStack(spacing: 2) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text("\(rhythm.streak)")
+                        .fontWeight(.semibold)
+                }
+                .font(.caption)
+            }
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .background(Color(hex: rhythm.colorHex)?.opacity(0.08) ?? Color.gray.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func completedRhythmRow(_ rhythm: RhythmWidgetItem) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(Color(hex: rhythm.colorHex) ?? .green)
+                .font(.body)
+
+            Text(rhythm.emoji)
+
+            Text(rhythm.title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+
+            Spacer()
+
+            if rhythm.streak > 0 {
+                HStack(spacing: 2) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text("\(rhythm.streak)")
+                }
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    // MARK: - Empty State
+
+    private var emptyStateView: some View {
+        VStack(spacing: 12) {
+            Spacer()
+
+            Image(systemName: "moon.stars.fill")
+                .font(.system(size: 40))
+                .foregroundStyle(.secondary.opacity(0.5))
+
+            Text("No rhythms scheduled")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text("Enjoy your free day!")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Previews
+
+#Preview("Large", as: .systemLarge) {
+    RhythmsDetailWidget()
+} timeline: {
+    DetailWidgetEntry(date: .now, data: .placeholder)
+    DetailWidgetEntry(date: .now, data: TodayWidgetData(
+        date: Date(),
+        totalCount: 0,
+        completedCount: 0,
+        rhythms: [],
+        nextRhythm: nil
+    ))
+}

@@ -1,0 +1,49 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="triBg" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F97316"/>
+      <stop offset="50%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#22C55E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background with orange -> blue -> green gradient -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="url(#triBg)"/>
+
+  <!-- Metronome body - taller, more recognizable pyramid -->
+  <path d="M 512 140 L 720 820 L 304 820 Z"
+        fill="white"/>
+
+  <!-- Inner face shading -->
+  <path d="M 512 200 L 680 780 L 344 780 Z"
+        fill="url(#triBg)"
+        opacity="0.1"/>
+
+  <!-- Scale markings on left side -->
+  <line x1="380" y1="350" x2="420" y2="350" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="390" y1="430" x2="430" y2="430" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="400" y1="510" x2="440" y2="510" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="410" y1="590" x2="450" y2="590" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="420" y1="670" x2="460" y2="670" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- Scale markings on right side -->
+  <line x1="604" y1="350" x2="644" y2="350" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="594" y1="430" x2="634" y2="430" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="584" y1="510" x2="624" y2="510" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="574" y1="590" x2="614" y2="590" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+  <line x1="564" y1="670" x2="604" y2="670" stroke="url(#triBg)" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- Pendulum arm -->
+  <rect x="496" y="180" width="32" height="560" rx="16" fill="url(#triBg)" opacity="0.8"/>
+
+  <!-- Pendulum weight -->
+  <rect x="456" y="380" width="112" height="70" rx="12" fill="url(#triBg)" opacity="0.85"/>
+  <rect x="468" y="392" width="88" height="46" rx="8" fill="white" opacity="0.3"/>
+
+  <!-- Top pivot point -->
+  <circle cx="512" cy="180" r="36" fill="url(#triBg)" opacity="0.9"/>
+  <circle cx="512" cy="180" r="20" fill="white" opacity="0.5"/>
+
+  <!-- Base -->
+  <rect x="320" y="800" width="384" height="36" rx="18" fill="url(#triBg)" opacity="0.3"/>
+</svg>

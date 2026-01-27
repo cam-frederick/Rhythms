@@ -1,0 +1,780 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5445C8812F00F349005309B3 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5445C8802F00F349005309B3 /* WidgetKit.framework */; };
+		5445C8832F00F349005309B3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5445C8822F00F349005309B3 /* SwiftUI.framework */; };
+		5445C8922F00F34A005309B3 /* RhythmsWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5445C87E2F00F349005309B3 /* RhythmsWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5445C8902F00F34A005309B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54CA4BDD2F0090950062ABDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5445C87D2F00F349005309B3;
+			remoteInfo = RhythmsWidgetsExtension;
+		};
+		54CA4BF32F0090970062ABDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54CA4BDD2F0090950062ABDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 54CA4BE42F0090950062ABDE;
+			remoteInfo = Rhythms;
+		};
+		54CA4BFD2F0090970062ABDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 54CA4BDD2F0090950062ABDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 54CA4BE42F0090950062ABDE;
+			remoteInfo = Rhythms;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5445C86F2F00F285005309B3 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5445C8922F00F34A005309B3 /* RhythmsWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5445C87E2F00F349005309B3 /* RhythmsWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RhythmsWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5445C8802F00F349005309B3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5445C8822F00F349005309B3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		5445C92A2F00F5A0005309B3 /* RhythmsWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RhythmsWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		54CA4BE52F0090950062ABDE /* Rhythms.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rhythms.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		54CA4BF22F0090970062ABDE /* RhythmsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RhythmsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		54CA4BFC2F0090970062ABDE /* RhythmsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RhythmsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5445C8932F00F34A005309B3 /* Exceptions for "RhythmsWidgets" folder in "RhythmsWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5445C87D2F00F349005309B3 /* RhythmsWidgetsExtension */;
+		};
+		5445C8AA2F00F37B005309B3 /* Exceptions for "Rhythms" folder in "RhythmsWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/SharedModelContainer.swift,
+				"Extensions/Date+Extensions.swift",
+				Models/Category.swift,
+				Models/Rhythm.swift,
+				Models/RhythmEntry.swift,
+				Models/RhythmNote.swift,
+				Models/RhythmSchedule.swift,
+			);
+			target = 5445C87D2F00F349005309B3 /* RhythmsWidgetsExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5445C8842F00F349005309B3 /* RhythmsWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5445C8932F00F34A005309B3 /* Exceptions for "RhythmsWidgets" folder in "RhythmsWidgetsExtension" target */,
+			);
+			path = RhythmsWidgets;
+			sourceTree = "<group>";
+		};
+		54CA4BE72F0090950062ABDE /* Rhythms */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5445C8AA2F00F37B005309B3 /* Exceptions for "Rhythms" folder in "RhythmsWidgetsExtension" target */,
+			);
+			path = Rhythms;
+			sourceTree = "<group>";
+		};
+		54CA4BF52F0090970062ABDE /* RhythmsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RhythmsTests;
+			sourceTree = "<group>";
+		};
+		54CA4BFF2F0090970062ABDE /* RhythmsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RhythmsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5445C87B2F00F349005309B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5445C8832F00F349005309B3 /* SwiftUI.framework in Frameworks */,
+				5445C8812F00F349005309B3 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BE22F0090950062ABDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BEF2F0090970062ABDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BF92F0090970062ABDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5445C87F2F00F349005309B3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5445C8802F00F349005309B3 /* WidgetKit.framework */,
+				5445C8822F00F349005309B3 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		54CA4BDC2F0090950062ABDE = {
+			isa = PBXGroup;
+			children = (
+				5445C92A2F00F5A0005309B3 /* RhythmsWidgetsExtension.entitlements */,
+				54CA4BE72F0090950062ABDE /* Rhythms */,
+				54CA4BF52F0090970062ABDE /* RhythmsTests */,
+				54CA4BFF2F0090970062ABDE /* RhythmsUITests */,
+				5445C8842F00F349005309B3 /* RhythmsWidgets */,
+				5445C87F2F00F349005309B3 /* Frameworks */,
+				54CA4BE62F0090950062ABDE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		54CA4BE62F0090950062ABDE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				54CA4BE52F0090950062ABDE /* Rhythms.app */,
+				54CA4BF22F0090970062ABDE /* RhythmsTests.xctest */,
+				54CA4BFC2F0090970062ABDE /* RhythmsUITests.xctest */,
+				5445C87E2F00F349005309B3 /* RhythmsWidgetsExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5445C87D2F00F349005309B3 /* RhythmsWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5445C8942F00F34A005309B3 /* Build configuration list for PBXNativeTarget "RhythmsWidgetsExtension" */;
+			buildPhases = (
+				5445C87A2F00F349005309B3 /* Sources */,
+				5445C87B2F00F349005309B3 /* Frameworks */,
+				5445C87C2F00F349005309B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5445C8842F00F349005309B3 /* RhythmsWidgets */,
+			);
+			name = RhythmsWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = RhythmsWidgetsExtension;
+			productReference = 5445C87E2F00F349005309B3 /* RhythmsWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		54CA4BE42F0090950062ABDE /* Rhythms */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54CA4C062F0090970062ABDE /* Build configuration list for PBXNativeTarget "Rhythms" */;
+			buildPhases = (
+				54CA4BE12F0090950062ABDE /* Sources */,
+				54CA4BE22F0090950062ABDE /* Frameworks */,
+				54CA4BE32F0090950062ABDE /* Resources */,
+				5445C86F2F00F285005309B3 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5445C8912F00F34A005309B3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				54CA4BE72F0090950062ABDE /* Rhythms */,
+			);
+			name = Rhythms;
+			packageProductDependencies = (
+			);
+			productName = Rhythms;
+			productReference = 54CA4BE52F0090950062ABDE /* Rhythms.app */;
+			productType = "com.apple.product-type.application";
+		};
+		54CA4BF12F0090970062ABDE /* RhythmsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54CA4C092F0090970062ABDE /* Build configuration list for PBXNativeTarget "RhythmsTests" */;
+			buildPhases = (
+				54CA4BEE2F0090970062ABDE /* Sources */,
+				54CA4BEF2F0090970062ABDE /* Frameworks */,
+				54CA4BF02F0090970062ABDE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54CA4BF42F0090970062ABDE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				54CA4BF52F0090970062ABDE /* RhythmsTests */,
+			);
+			name = RhythmsTests;
+			packageProductDependencies = (
+			);
+			productName = RhythmsTests;
+			productReference = 54CA4BF22F0090970062ABDE /* RhythmsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		54CA4BFB2F0090970062ABDE /* RhythmsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54CA4C0C2F0090970062ABDE /* Build configuration list for PBXNativeTarget "RhythmsUITests" */;
+			buildPhases = (
+				54CA4BF82F0090970062ABDE /* Sources */,
+				54CA4BF92F0090970062ABDE /* Frameworks */,
+				54CA4BFA2F0090970062ABDE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54CA4BFE2F0090970062ABDE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				54CA4BFF2F0090970062ABDE /* RhythmsUITests */,
+			);
+			name = RhythmsUITests;
+			packageProductDependencies = (
+			);
+			productName = RhythmsUITests;
+			productReference = 54CA4BFC2F0090970062ABDE /* RhythmsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		54CA4BDD2F0090950062ABDE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					5445C87D2F00F349005309B3 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					54CA4BE42F0090950062ABDE = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					54CA4BF12F0090970062ABDE = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 54CA4BE42F0090950062ABDE;
+					};
+					54CA4BFB2F0090970062ABDE = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 54CA4BE42F0090950062ABDE;
+					};
+				};
+			};
+			buildConfigurationList = 54CA4BE02F0090950062ABDE /* Build configuration list for PBXProject "Rhythms" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 54CA4BDC2F0090950062ABDE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 54CA4BE62F0090950062ABDE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				54CA4BE42F0090950062ABDE /* Rhythms */,
+				54CA4BF12F0090970062ABDE /* RhythmsTests */,
+				54CA4BFB2F0090970062ABDE /* RhythmsUITests */,
+				5445C87D2F00F349005309B3 /* RhythmsWidgetsExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5445C87C2F00F349005309B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BE32F0090950062ABDE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BF02F0090970062ABDE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BFA2F0090970062ABDE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5445C87A2F00F349005309B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BE12F0090950062ABDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BEE2F0090970062ABDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54CA4BF82F0090970062ABDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5445C8912F00F34A005309B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5445C87D2F00F349005309B3 /* RhythmsWidgetsExtension */;
+			targetProxy = 5445C8902F00F34A005309B3 /* PBXContainerItemProxy */;
+		};
+		54CA4BF42F0090970062ABDE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 54CA4BE42F0090950062ABDE /* Rhythms */;
+			targetProxy = 54CA4BF32F0090970062ABDE /* PBXContainerItemProxy */;
+		};
+		54CA4BFE2F0090970062ABDE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 54CA4BE42F0090950062ABDE /* Rhythms */;
+			targetProxy = 54CA4BFD2F0090970062ABDE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5445C8952F00F34A005309B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = RhythmsWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QTX695U3Q9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RhythmsWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RhythmsWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CamFrederick.Rhythms.RhythmsWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5445C8962F00F34A005309B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = RhythmsWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QTX695U3Q9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RhythmsWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RhythmsWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CamFrederick.Rhythms.RhythmsWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		54CA4C042F0090970062ABDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		54CA4C052F0090970062ABDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		54CA4C072F0090970062ABDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = Rhythms/Rhythms.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QTX695U3Q9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CamFrederick.Rhythms;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		54CA4C082F0090970062ABDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = Rhythms/Rhythms.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QTX695U3Q9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CamFrederick.Rhythms;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		54CA4C0A2F0090970062ABDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Cam.RhythmsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rhythms.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Rhythms";
+			};
+			name = Debug;
+		};
+		54CA4C0B2F0090970062ABDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Cam.RhythmsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rhythms.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Rhythms";
+			};
+			name = Release;
+		};
+		54CA4C0D2F0090970062ABDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Cam.RhythmsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Rhythms;
+			};
+			name = Debug;
+		};
+		54CA4C0E2F0090970062ABDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9738J5AJJK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Cam.RhythmsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Rhythms;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5445C8942F00F34A005309B3 /* Build configuration list for PBXNativeTarget "RhythmsWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5445C8952F00F34A005309B3 /* Debug */,
+				5445C8962F00F34A005309B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54CA4BE02F0090950062ABDE /* Build configuration list for PBXProject "Rhythms" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54CA4C042F0090970062ABDE /* Debug */,
+				54CA4C052F0090970062ABDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54CA4C062F0090970062ABDE /* Build configuration list for PBXNativeTarget "Rhythms" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54CA4C072F0090970062ABDE /* Debug */,
+				54CA4C082F0090970062ABDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54CA4C092F0090970062ABDE /* Build configuration list for PBXNativeTarget "RhythmsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54CA4C0A2F0090970062ABDE /* Debug */,
+				54CA4C0B2F0090970062ABDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54CA4C0C2F0090970062ABDE /* Build configuration list for PBXNativeTarget "RhythmsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54CA4C0D2F0090970062ABDE /* Debug */,
+				54CA4C0E2F0090970062ABDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 54CA4BDD2F0090950062ABDE /* Project object */;
+}
