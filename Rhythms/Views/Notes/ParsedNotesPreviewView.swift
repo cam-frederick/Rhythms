@@ -11,45 +11,60 @@ import SwiftUI
 @available(iOS 26, *)
 struct ParsedNotesPreviewView: View {
     let previews: [NoteParsingService.ParsedNotePreview]
+    let colorScheme: ColorScheme
     let onConfirm: () -> Void
     let onCancel: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
             // Header
             HStack {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(ThemeColors.accentGold)
                 Text("Found \(previews.count) note\(previews.count == 1 ? "" : "s")")
-                    .font(.subheadline)
+                    .font(ThemeTypography.bodyMedium)
                     .fontWeight(.medium)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
             }
 
             // Note Previews
             ForEach(previews) { preview in
-                PreviewNoteRow(preview: preview)
+                PreviewNoteRow(preview: preview, colorScheme: colorScheme)
             }
 
             // Action Buttons
-            HStack(spacing: 12) {
+            HStack(spacing: ThemeSpacing.sm) {
                 Button("Cancel") {
                     onCancel()
                 }
-                .buttonStyle(.bordered)
+                .font(ThemeTypography.labelMedium)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                .padding(.horizontal, ThemeSpacing.md)
+                .padding(.vertical, ThemeSpacing.sm)
+                .background(ThemeColors.bgSecondary(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
 
                 Button("Add All") {
                     onConfirm()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.green)
+                .font(ThemeTypography.labelMedium)
+                .foregroundStyle(colorScheme == .dark ? .black : .white)
+                .padding(.horizontal, ThemeSpacing.md)
+                .padding(.vertical, ThemeSpacing.sm)
+                .background(ThemeColors.accentGold)
+                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding()
+        .padding(ThemeSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.green.opacity(0.1))
+            RoundedRectangle(cornerRadius: ThemeRadius.large)
+                .fill(ThemeColors.accentGold.opacity(0.1))
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.large)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 }
 
@@ -58,32 +73,34 @@ struct ParsedNotesPreviewView: View {
 @available(iOS 26, *)
 struct PreviewNoteRow: View {
     let preview: NoteParsingService.ParsedNotePreview
+    let colorScheme: ColorScheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.xs) {
             HStack {
                 Text(preview.scheduleDescription)
-                    .font(.caption)
+                    .font(ThemeTypography.caption)
                     .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.accentGold)
 
                 Spacer()
 
                 if preview.isRecurring {
                     Image(systemName: "repeat")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.caption)
+                        .foregroundStyle(ThemeColors.textMuted(colorScheme))
                 }
             }
 
             Text(preview.content)
-                .font(.subheadline)
+                .font(ThemeTypography.bodyMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
+        .padding(.vertical, ThemeSpacing.sm)
+        .padding(.horizontal, ThemeSpacing.sm)
         .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ThemeRadius.medium)
+                .fill(ThemeColors.bgCard(colorScheme))
         }
     }
 }
@@ -114,6 +131,7 @@ struct PreviewNoteRow: View {
                 specificDate: nil
             )
         ],
+        colorScheme: .dark,
         onConfirm: {},
         onCancel: {}
     )

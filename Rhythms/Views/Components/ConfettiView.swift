@@ -12,7 +12,15 @@ struct ConfettiView: View {
 
     @State private var particles: [ConfettiParticle] = []
 
-    private let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink]
+    // Gold-themed confetti colors
+    private let colors: [Color] = [
+        ThemeColors.accentGold,
+        ThemeColors.accentGold.opacity(0.8),
+        Color(hex: "#d4b96e")!,
+        Color(hex: "#e8d5a3")!,
+        Color.white.opacity(0.9),
+        Color.white.opacity(0.7)
+    ]
     private let particleCount = 50
 
     var body: some View {
@@ -137,6 +145,7 @@ struct AnyShape: Shape {
 // MARK: - Streak Milestone Overlay
 
 struct StreakMilestoneOverlay: View {
+    @Environment(\.colorScheme) private var colorScheme
     let streak: Int
     @Binding var isShowing: Bool
 
@@ -147,7 +156,7 @@ struct StreakMilestoneOverlay: View {
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.4)
+            ThemeColors.overlayDim(colorScheme)
                 .ignoresSafeArea()
                 .opacity(opacity)
                 .onTapGesture {
@@ -155,37 +164,41 @@ struct StreakMilestoneOverlay: View {
                 }
 
             // Milestone card
-            VStack(spacing: 20) {
+            VStack(spacing: ThemeSpacing.lg) {
                 Text("🔥")
                     .font(.system(size: 64))
 
                 Text("\(streak) Day Streak!")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(ThemeTypography.displayMedium)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                 Text(milestoneMessage)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.bodyLarge)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     .multilineTextAlignment(.center)
 
                 Button {
                     dismiss()
                 } label: {
                     Text("Keep Going!")
-                        .font(.headline)
-                        .foregroundStyle(.white)
+                        .font(ThemeTypography.labelLarge)
+                        .foregroundStyle(colorScheme == .dark ? .black : .white)
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .padding(ThemeSpacing.md)
+                        .background(ThemeColors.accentGold)
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
                 }
-                .padding(.top)
+                .padding(.top, ThemeSpacing.sm)
             }
-            .padding(32)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(radius: 20)
-            .padding(40)
+            .padding(ThemeSpacing.xl)
+            .background(ThemeColors.bgElevated(colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xxlarge))
+            .overlay(
+                RoundedRectangle(cornerRadius: ThemeRadius.xxlarge)
+                    .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+            )
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.5 : 0.2), radius: 20)
+            .padding(ThemeSpacing.xl)
             .scaleEffect(scale)
             .opacity(opacity)
 

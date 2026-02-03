@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct CalendarPickerView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var selectedDate: Date
     @Environment(\.dismiss) private var dismiss
 
@@ -25,7 +26,7 @@ struct CalendarPickerView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack(spacing: ThemeSpacing.lg) {
                 // Month navigation
                 monthHeader
 
@@ -37,12 +38,14 @@ struct CalendarPickerView: View {
 
                 Spacer()
             }
-            .padding()
+            .padding(ThemeSpacing.md)
+            .background(ThemeColors.bgPrimary(colorScheme))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Today") {
@@ -50,6 +53,7 @@ struct CalendarPickerView: View {
                         displayedMonth = Date()
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.accentGold)
                 }
             }
         }
@@ -60,34 +64,34 @@ struct CalendarPickerView: View {
     private var monthHeader: some View {
         HStack {
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth)!
                 }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
 
             Spacer()
 
             Text(monthYearString)
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(ThemeTypography.titleMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Spacer()
 
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     displayedMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth)!
                 }
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, ThemeSpacing.md)
     }
 
     private var monthYearString: String {
@@ -99,12 +103,12 @@ struct CalendarPickerView: View {
     // MARK: - Weekday Header
 
     private var weekdayHeader: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: ThemeSpacing.sm) {
             ForEach(weekdaySymbols, id: \.self) { symbol in
                 Text(symbol)
-                    .font(.caption)
+                    .font(ThemeTypography.caption)
                     .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
             }
         }
     }
@@ -114,7 +118,7 @@ struct CalendarPickerView: View {
     private var calendarGrid: some View {
         let days = daysInMonth()
 
-        return LazyVGrid(columns: columns, spacing: 8) {
+        return LazyVGrid(columns: columns, spacing: ThemeSpacing.sm) {
             ForEach(days, id: \.self) { day in
                 if let date = day {
                     CalendarDayCell(
@@ -122,7 +126,8 @@ struct CalendarPickerView: View {
                         isSelected: date.isSameDay(as: selectedDate),
                         isToday: date.isToday,
                         progress: progressForDate(date),
-                        rhythmCount: rhythmCountForDate(date)
+                        rhythmCount: rhythmCountForDate(date),
+                        colorScheme: colorScheme
                     )
                     .onTapGesture {
                         selectedDate = date
@@ -182,6 +187,7 @@ struct CalendarDayCell: View {
     let isToday: Bool
     let progress: Double?
     let rhythmCount: Int
+    let colorScheme: ColorScheme
 
     private let cellSize: CGFloat = 44
 
@@ -189,13 +195,13 @@ struct CalendarDayCell: View {
         guard let progress else { return .clear }
         switch progress {
         case 1.0:
-            return .green
+            return ThemeColors.accentGold
         case 0.5..<1.0:
-            return .blue
+            return ThemeColors.accentGold.opacity(0.7)
         case 0.0..<0.5:
-            return .orange
+            return ThemeColors.accentGold.opacity(0.4)
         default:
-            return .gray.opacity(0.3)
+            return ThemeColors.textMuted(colorScheme).opacity(0.3)
         }
     }
 
@@ -205,7 +211,7 @@ struct CalendarDayCell: View {
                 // Progress ring for past dates
                 if let progress, progress > 0 {
                     Circle()
-                        .stroke(Color.secondary.opacity(0.15), lineWidth: 4)
+                        .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: 4)
 
                     Circle()
                         .trim(from: 0, to: progress)
@@ -216,10 +222,10 @@ struct CalendarDayCell: View {
                 // Today or selection highlight
                 if isSelected {
                     Circle()
-                        .fill(Color.accentColor)
+                        .fill(ThemeColors.accentGold)
                 } else if isToday {
                     Circle()
-                        .fill(Color.accentColor.opacity(0.2))
+                        .fill(ThemeColors.accentGold.opacity(0.2))
                 }
 
                 // Day number
@@ -237,11 +243,11 @@ struct CalendarDayCell: View {
 
     private var dayTextColor: Color {
         if isSelected {
-            return .white
+            return colorScheme == .dark ? .black : .white
         } else if date.isFuture {
-            return .primary.opacity(0.5)
+            return ThemeColors.textPrimary(colorScheme).opacity(0.5)
         } else {
-            return .primary
+            return ThemeColors.textPrimary(colorScheme)
         }
     }
 
@@ -257,7 +263,7 @@ struct CalendarDayCell: View {
                 if rhythmCount > 4 {
                     Text("+")
                         .font(.system(size: 6, weight: .bold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
             }
         } else {
@@ -268,11 +274,11 @@ struct CalendarDayCell: View {
 
     private var dotColor: Color {
         if isSelected {
-            return .accentColor
+            return ThemeColors.accentGold
         } else if let progress, progress == 1.0 {
-            return .green
+            return ThemeColors.accentGold
         } else {
-            return .secondary.opacity(0.5)
+            return ThemeColors.textSecondary(colorScheme).opacity(0.5)
         }
     }
 }

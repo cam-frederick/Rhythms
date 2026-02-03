@@ -59,6 +59,7 @@ struct ProgressWidgetEntry: TimelineEntry {
 
 struct ProgressWidgetView: View {
     @Environment(\.widgetFamily) var family
+    @Environment(\.colorScheme) var colorScheme
     var entry: ProgressWidgetEntry
 
     var body: some View {
@@ -77,16 +78,16 @@ struct ProgressWidgetView: View {
     // MARK: - Small Widget View
 
     private var smallView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: WidgetTheme.spacingSM) {
             // Progress ring
             ZStack {
                 Circle()
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 8)
+                    .stroke(WidgetTheme.borderSubtle(colorScheme), lineWidth: 8)
 
                 Circle()
                     .trim(from: 0, to: entry.data.completionRate)
                     .stroke(
-                        entry.data.isAllComplete ? Color.green : Color.accentColor,
+                        WidgetTheme.accentGold,
                         style: StrokeStyle(lineWidth: 8, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
@@ -96,13 +97,14 @@ struct ProgressWidgetView: View {
                     if entry.data.isAllComplete {
                         Image(systemName: "checkmark")
                             .font(.title2.bold())
-                            .foregroundStyle(.green)
+                            .foregroundStyle(WidgetTheme.accentGold)
                     } else {
                         Text("\(entry.data.completedCount)")
-                            .font(.title.bold())
+                            .font(WidgetTheme.numericLarge)
+                            .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                         Text("of \(entry.data.totalCount)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .font(WidgetTheme.caption)
+                            .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                     }
                 }
             }
@@ -112,16 +114,16 @@ struct ProgressWidgetView: View {
             Group {
                 if entry.data.totalCount == 0 {
                     Text("No rhythms today")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 } else if entry.data.isAllComplete {
                     Text("All done!")
-                        .font(.caption.bold())
-                        .foregroundStyle(.green)
+                        .font(WidgetTheme.labelMedium)
+                        .foregroundStyle(WidgetTheme.accentGold)
                 } else {
                     Text("\(entry.data.remainingCount) remaining")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 }
             }
         }
@@ -156,7 +158,7 @@ struct ProgressWidgetView: View {
                     .stroke(Color.gray.opacity(0.3), lineWidth: 4)
                 Circle()
                     .trim(from: 0, to: entry.data.completionRate)
-                    .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .stroke(WidgetTheme.accentGold, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                     .rotationEffect(.degrees(-90))
             }
             .frame(width: 30, height: 30)

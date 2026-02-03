@@ -11,21 +11,51 @@ Rhythms is a native iOS habit-tracking app built with SwiftUI and SwiftData. It 
 - **iOS Deployment Target**: 18.5
 - **Dependencies**: None (all native Apple frameworks)
 
-## Common Commands
+## Build & Run (XcodeBuildMCP)
 
-```bash
-# Build the project
-xcodebuild -scheme Rhythms -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' build
+This project uses **XcodeBuildMCP** for all building, running, and testing. Use the MCP tools instead of raw `xcodebuild` commands.
 
-# Run all tests
-xcodebuild test -scheme Rhythms -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2'
+### Common Operations
 
-# Run a specific test file
-xcodebuild test -scheme Rhythms -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' -only-testing:RhythmsTests/RhythmsTests
-
-# Run a specific test method
-xcodebuild test -scheme Rhythms -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' -only-testing:RhythmsTests/RhythmsTests/testRhythmInitialization
+**Build for Simulator:**
 ```
+Use: mcp__XcodeBuildMCP__xcodebuild_build
+- scheme: "Rhythms"
+- destination: iOS Simulator (iPhone 17, iOS 26.2)
+```
+
+**Build and Run on Device:**
+```
+Use: mcp__XcodeBuildMCP__xcodebuild_build_and_run
+- scheme: "Rhythms"
+- destination: Physical device
+```
+
+**Run Tests:**
+```
+Use: mcp__XcodeBuildMCP__xcodebuild_test
+- scheme: "Rhythms"
+- destination: iOS Simulator
+```
+
+**List Available Simulators/Devices:**
+```
+Use: mcp__XcodeBuildMCP__list_simulators
+Use: mcp__XcodeBuildMCP__list_devices
+```
+
+**Discover Project Info:**
+```
+Use: mcp__XcodeBuildMCP__discover_projects
+Use: mcp__XcodeBuildMCP__get_project_info
+```
+
+### Why XcodeBuildMCP?
+
+- **Better Integration**: Native MCP tools provide structured output and better error handling
+- **Incremental Builds**: Supports faster incremental builds
+- **Device Management**: Simplified device/simulator selection and management
+- **Session Persistence**: Maintains build session state across tool calls
 
 ## Architecture
 

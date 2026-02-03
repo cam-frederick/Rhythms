@@ -14,6 +14,7 @@ struct RhythmEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.hapticService) private var hapticService
     @Environment(\.notificationService) private var notificationService
+    @Environment(\.colorScheme) private var colorScheme
 
     @Query(sort: \Category.sortOrder) private var categories: [Category]
 

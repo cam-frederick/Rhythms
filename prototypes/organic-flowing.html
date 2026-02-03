@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythms - Organic/Flowing Style</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1614;
+            --bg-secondary: #252019;
+            --bg-card: #2d261f;
+            --bg-elevated: #3a322a;
+
+            --text-primary: #f5f0e8;
+            --text-secondary: #a89f94;
+            --text-muted: #6d6560;
+
+            --accent-amber: #e8a54b;
+            --accent-coral: #e07a5f;
+            --accent-sage: #7d9b76;
+            --accent-lavender: #9b8dc4;
+            --accent-rose: #d4838f;
+
+            --gradient-warm: linear-gradient(135deg, #e8a54b 0%, #e07a5f 50%, #d4838f 100%);
+            --gradient-earth: linear-gradient(135deg, #7d9b76 0%, #5a7d5a 100%);
+            --gradient-sunset: linear-gradient(180deg, #e8a54b 0%, #e07a5f 100%);
+
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 32px;
+            --radius-full: 9999px;
+
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(232, 165, 75, 0.15);
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            border-radius: 44px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Floating blob backgrounds */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent-amber);
+            top: -50px;
+            right: -50px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 150px;
+            height: 150px;
+            background: var(--accent-coral);
+            bottom: 200px;
+            left: -40px;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 180px;
+            height: 180px;
+            background: var(--accent-sage);
+            bottom: -30px;
+            right: -30px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(10px, -20px) scale(1.05); }
+            50% { transform: translate(-10px, 10px) scale(0.95); }
+            75% { transform: translate(20px, 5px) scale(1.02); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 60px 20px 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .date-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-warm);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--bg-primary);
+        }
+
+        /* Date Selector */
+        .date-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            min-width: 52px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .date-item:hover {
+            transform: translateY(-2px);
+            background: var(--bg-elevated);
+        }
+
+        .date-item.active {
+            background: var(--gradient-warm);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .date-item.active .day-name,
+        .date-item.active .day-num {
+            color: var(--bg-primary);
+        }
+
+        .day-name {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-num {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 4px;
+        }
+
+        /* Progress Ring Section */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-warm);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .progress-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .progress-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-ring {
+            width: 160px;
+            height: 160px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: var(--bg-elevated);
+            stroke-width: 12;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#warmGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 408.4;
+            stroke-dashoffset: 122.5;
+            animation: ringFill 1.5s ease-out forwards;
+            filter: drop-shadow(0 0 8px rgba(232, 165, 75, 0.4));
+        }
+
+        @keyframes ringFill {
+            from { stroke-dashoffset: 408.4; }
+            to { stroke-dashoffset: 122.5; }
+        }
+
+        .progress-center {
+            position: absolute;
+            text-align: center;
+        }
+
+        .progress-percent {
+            font-size: 42px;
+            font-weight: 800;
+            background: var(--gradient-warm);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Rhythm Cards */
+        .rhythms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .rhythms-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: var(--accent-amber);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .rhythm-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rhythm-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .rhythm-card.amber::before { background: var(--accent-amber); }
+        .rhythm-card.coral::before { background: var(--accent-coral); }
+        .rhythm-card.sage::before { background: var(--accent-sage); }
+        .rhythm-card.lavender::before { background: var(--accent-lavender); }
+
+        .rhythm-card:hover {
+            transform: translateX(4px);
+            background: var(--bg-elevated);
+        }
+
+        .rhythm-card.completed {
+            opacity: 0.6;
+        }
+
+        .rhythm-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .rhythm-card.amber .rhythm-icon { background: rgba(232, 165, 75, 0.15); }
+        .rhythm-card.coral .rhythm-icon { background: rgba(224, 122, 95, 0.15); }
+        .rhythm-card.sage .rhythm-icon { background: rgba(125, 155, 118, 0.15); }
+        .rhythm-card.lavender .rhythm-icon { background: rgba(155, 141, 196, 0.15); }
+
+        .rhythm-info {
+            flex: 1;
+        }
+
+        .rhythm-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .rhythm-streak {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .streak-fire {
+            color: var(--accent-coral);
+        }
+
+        .check-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .check-btn:hover {
+            border-color: var(--accent-amber);
+            transform: scale(1.1);
+        }
+
+        .check-btn.checked {
+            background: var(--gradient-warm);
+            border-color: transparent;
+        }
+
+        .check-btn.checked svg {
+            opacity: 1;
+        }
+
+        .check-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--bg-primary);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Quick Check-In Sheet */
+        .sheet-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .sheet-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .check-in-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 11;
+        }
+
+        .sheet-overlay.active + .check-in-sheet,
+        .check-in-sheet.active {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: var(--radius-full);
+            margin: 0 auto 20px;
+        }
+
+        .sheet-title {
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .sheet-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .mood-selector {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .mood-option {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid transparent;
+        }
+
+        .mood-option:hover {
+            transform: scale(1.1) translateY(-4px);
+        }
+
+        .mood-option.selected {
+            border-color: var(--accent-amber);
+            background: rgba(232, 165, 75, 0.15);
+            transform: scale(1.15);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: var(--gradient-warm);
+            color: var(--bg-primary);
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .complete-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Style Label */
+        .style-label {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="style-label">Organic / Flowing Style</div>
+
+    <div class="phone-frame">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+
+        <div class="content">
+            <div class="header">
+                <div>
+                    <div class="greeting">Good morning</div>
+                    <div class="date-title">Today</div>
+                </div>
+                <div class="avatar">CF</div>
+            </div>
+
+            <div class="date-selector">
+                <div class="date-item">
+                    <span class="day-name">Mon</span>
+                    <span class="day-num">27</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Tue</span>
+                    <span class="day-num">28</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Wed</span>
+                    <span class="day-num">29</span>
+                </div>
+                <div class="date-item active">
+                    <span class="day-name">Thu</span>
+                    <span class="day-num">30</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Fri</span>
+                    <span class="day-num">31</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Sat</span>
+                    <span class="day-num">1</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Sun</span>
+                    <span class="day-num">2</span>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div>
+                        <div class="progress-title">Daily Progress</div>
+                        <div class="progress-subtitle">5 of 7 rhythms completed</div>
+                    </div>
+                </div>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" viewBox="0 0 160 160">
+                        <defs>
+                            <linearGradient id="warmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#e8a54b"/>
+                                <stop offset="50%" stop-color="#e07a5f"/>
+                                <stop offset="100%" stop-color="#d4838f"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-bg" cx="80" cy="80" r="65"/>
+                        <circle class="progress-ring-fill" cx="80" cy="80" r="65"/>
+                    </svg>
+                    <div class="progress-center">
+                        <div class="progress-percent">70%</div>
+                        <div class="progress-label">complete</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rhythms-header">
+                <div class="rhythms-title">Today's Rhythms</div>
+                <div class="see-all">See all</div>
+            </div>
+
+            <div class="rhythm-card amber" onclick="openSheet(this)">
+                <div class="rhythm-icon">🧘</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Morning Meditation</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 12 day streak</div>
+                </div>
+                <div class="check-btn checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card coral" onclick="openSheet(this)">
+                <div class="rhythm-icon">💪</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Workout</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 8 day streak</div>
+                </div>
+                <div class="check-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card sage" onclick="openSheet(this)">
+                <div class="rhythm-icon">📚</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Read 30 minutes</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 21 day streak</div>
+                </div>
+                <div class="check-btn checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card lavender" onclick="openSheet(this)">
+                <div class="rhythm-icon">💤</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Sleep by 11pm</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 5 day streak</div>
+                </div>
+                <div class="check-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-overlay" onclick="closeSheet()"></div>
+        <div class="check-in-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">How are you feeling?</div>
+            <div class="sheet-subtitle">Track your mood with today's check-in</div>
+
+            <div class="mood-selector">
+                <div class="mood-option" onclick="selectMood(this)">😔</div>
+                <div class="mood-option" onclick="selectMood(this)">😐</div>
+                <div class="mood-option selected" onclick="selectMood(this)">🙂</div>
+                <div class="mood-option" onclick="selectMood(this)">😊</div>
+                <div class="mood-option" onclick="selectMood(this)">🤩</div>
+            </div>
+
+            <button class="complete-btn" onclick="completeCheckIn()">Complete Check-In</button>
+        </div>
+    </div>
+
+    <script>
+        function openSheet(card) {
+            document.querySelector('.sheet-overlay').classList.add('active');
+            document.querySelector('.check-in-sheet').classList.add('active');
+        }
+
+        function closeSheet() {
+            document.querySelector('.sheet-overlay').classList.remove('active');
+            document.querySelector('.check-in-sheet').classList.remove('active');
+        }
+
+        function selectMood(el) {
+            document.querySelectorAll('.mood-option').forEach(m => m.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function completeCheckIn() {
+            closeSheet();
+        }
+
+        // Date selector interaction
+        document.querySelectorAll('.date-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Check button toggle
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('checked');
+            });
+        });
+    </script>
+</body>
+</html>

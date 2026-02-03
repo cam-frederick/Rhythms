@@ -12,6 +12,7 @@ import SwiftData
 struct RhythmNotesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @Bindable var rhythm: Rhythm
 
     @State private var showingAddSheet = false
@@ -40,15 +41,16 @@ struct RhythmNotesView: View {
             List {
                 // Explanation section
                 Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
                         Label("Scheduled Notes", systemImage: "note.text")
-                            .font(.headline)
+                            .font(ThemeTypography.titleSmall)
+                            .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                         Text("Add notes for specific days to track workout splits, reading goals, or daily focus areas.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .font(ThemeTypography.bodyMedium)
+                            .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, ThemeSpacing.xs)
                 }
 
                 // Smart Add section (iOS 26+ only)
@@ -115,21 +117,22 @@ struct RhythmNotesView: View {
                 // Empty state
                 if rhythm.notes.isEmpty {
                     Section {
-                        VStack(spacing: 16) {
+                        VStack(spacing: ThemeSpacing.md) {
                             Image(systemName: "note.text.badge.plus")
                                 .font(.system(size: 40))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(ThemeColors.accentGold.opacity(0.7))
 
                             Text("No notes yet")
-                                .font(.headline)
+                                .font(ThemeTypography.titleSmall)
+                                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                             Text("Add notes to plan your \(rhythm.title.lowercased()) schedule")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.bodyMedium)
+                                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                                 .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 20)
+                        .padding(.vertical, ThemeSpacing.lg)
                     }
                 }
 
@@ -139,9 +142,12 @@ struct RhythmNotesView: View {
                         showingAddSheet = true
                     } label: {
                         Label("Add Note", systemImage: "plus.circle.fill")
+                            .foregroundStyle(ThemeColors.accentGold)
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(ThemeColors.bgPrimary(colorScheme))
             .navigationTitle("Notes")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -149,6 +155,7 @@ struct RhythmNotesView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.accentGold)
                 }
             }
             .sheet(isPresented: $showingAddSheet) {
@@ -173,30 +180,32 @@ struct RhythmNotesView: View {
 // MARK: - Note Row
 
 struct NoteRow: View {
+    @Environment(\.colorScheme) private var colorScheme
     let note: RhythmNote
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.xs) {
             HStack {
                 Text(note.scheduleDescription)
-                    .font(.subheadline)
+                    .font(ThemeTypography.caption)
                     .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.accentGold)
 
                 Spacer()
 
                 if note.isRecurring {
                     Image(systemName: "repeat")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.caption)
+                        .foregroundStyle(ThemeColors.textMuted(colorScheme))
                 }
             }
 
             Text(note.content)
-                .font(.body)
+                .font(ThemeTypography.bodyMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
                 .lineLimit(3)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, ThemeSpacing.xs)
     }
 }
 

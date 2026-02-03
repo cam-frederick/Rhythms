@@ -11,6 +11,7 @@ import SwiftData
 struct NoteEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     let rhythm: Rhythm
     let mode: Mode
@@ -68,6 +69,7 @@ struct NoteEditorView: View {
                 // Note content
                 Section("Note Content") {
                     TextField("What's the plan?", text: $content, axis: .vertical)
+                        .font(ThemeTypography.bodyMedium)
                         .lineLimit(3...8)
                 }
 
@@ -103,6 +105,7 @@ struct NoteEditorView: View {
                             selection: $selectedDate,
                             displayedComponents: .date
                         )
+                        .tint(ThemeColors.accentGold)
                     }
                 }
 
@@ -110,10 +113,10 @@ struct NoteEditorView: View {
                 Section {
                     HStack {
                         Image(systemName: "info.circle")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(ThemeColors.textMuted(colorScheme))
                         Text(noteType.description)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .font(ThemeTypography.bodyMedium)
+                            .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     }
                 }
 
@@ -126,12 +129,15 @@ struct NoteEditorView: View {
                             HStack {
                                 Spacer()
                                 Label("Delete Note", systemImage: "trash")
+                                    .foregroundStyle(ThemeColors.destructive(colorScheme))
                                 Spacer()
                             }
                         }
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(ThemeColors.bgPrimary(colorScheme))
             .navigationTitle(mode.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -139,6 +145,7 @@ struct NoteEditorView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
@@ -147,6 +154,7 @@ struct NoteEditorView: View {
                     }
                     .disabled(!isValid)
                     .fontWeight(.semibold)
+                    .foregroundStyle(isValid ? ThemeColors.accentGold : ThemeColors.textMuted(colorScheme))
                 }
             }
             .confirmationDialog(

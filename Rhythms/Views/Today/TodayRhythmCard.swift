@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TodayRhythmCard: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let rhythm: Rhythm
     let selectedDate: Date
     let onToggle: () -> Void
@@ -22,11 +24,11 @@ struct TodayRhythmCard: View {
 
     var body: some View {
         Button(action: onToggle) {
-            HStack(spacing: 16) {
+            HStack(spacing: ThemeSpacing.md) {
                 // Completion checkbox
                 ZStack {
                     Circle()
-                        .stroke(isCompleted ? rhythm.color : Color.secondary.opacity(0.3), lineWidth: 2)
+                        .stroke(isCompleted ? rhythm.color : ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.standard)
                         .frame(width: 28, height: 28)
 
                     if isCompleted {
@@ -36,40 +38,40 @@ struct TodayRhythmCard: View {
 
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(colorScheme == .dark ? .black : .white)
                     }
                 }
 
                 // Rhythm info
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: ThemeSpacing.xs) {
+                    HStack(spacing: ThemeSpacing.sm) {
                         Text(rhythm.emoji)
                             .font(.title3)
 
                         Text(rhythm.title)
-                            .font(.headline)
-                            .foregroundStyle(isCompleted ? .secondary : .primary)
-                            .strikethrough(isCompleted)
+                            .font(ThemeTypography.titleSmall)
+                            .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textPrimary(colorScheme))
+                            .strikethrough(isCompleted, color: ThemeColors.textMuted(colorScheme))
                     }
 
                     // Show today's note if available
                     if let note = todaysNote {
                         Text(note.content)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .font(ThemeTypography.bodySmall)
+                            .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                             .lineLimit(2)
                     }
 
                     // Streak badge
                     if rhythm.currentStreak > 0 {
-                        HStack(spacing: 4) {
+                        HStack(spacing: ThemeSpacing.xs) {
                             Image(systemName: "flame.fill")
-                                .font(.caption)
-                                .foregroundStyle(.orange)
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.accentGold)
 
                             Text("\(rhythm.currentStreak) day streak")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                         }
                     }
                 }
@@ -83,19 +85,24 @@ struct TodayRhythmCard: View {
                         .opacity(0.6)
                 }
             }
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isCompleted ? Color.secondary.opacity(0.1) : Color(.systemBackground))
-                    .shadow(color: .black.opacity(isCompleted ? 0 : 0.05), radius: 4, y: 2)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isCompleted ? rhythm.color.opacity(0.3) : Color.clear, lineWidth: 1)
-            }
+            .padding(ThemeSpacing.md)
+            .background(ThemeColors.bgCard(colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.large))
+            .overlay(
+                RoundedRectangle(cornerRadius: ThemeRadius.large)
+                    .stroke(
+                        isCompleted ? rhythm.color.opacity(0.3) : ThemeColors.borderSubtle(colorScheme),
+                        lineWidth: ThemeBorder.thin
+                    )
+            )
+            .shadow(
+                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted ? 0 : 0.04),
+                radius: isCompleted ? 0 : 6,
+                y: isCompleted ? 0 : 2
+            )
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.2), value: isCompleted)
+        .animation(ThemeAnimation.standardEase, value: isCompleted)
     }
 }
 

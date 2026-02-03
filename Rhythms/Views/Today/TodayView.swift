@@ -11,6 +11,7 @@ import SwiftData
 struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.hapticService) private var hapticService
+    @Environment(\.colorScheme) private var colorScheme
 
     @Query(
         filter: #Predicate<Rhythm> { !$0.isArchived && !$0.isPaused },
@@ -54,7 +55,7 @@ struct TodayView: View {
             VStack(spacing: 0) {
                 // Date selector (outside ScrollView)
                 DateSelectorView(selectedDate: $selectedDate)
-                    .padding(.top, 8)
+                    .padding(.top, ThemeSpacing.sm)
 
                 // Progress ring (outside ScrollView)
                 DailyProgressRing(
@@ -63,12 +64,12 @@ struct TodayView: View {
                     totalCount: totalCount
                 )
                 .frame(height: 180)
-                .padding(.horizontal)
-                .padding(.vertical, 16)
+                .padding(.horizontal, ThemeSpacing.md)
+                .padding(.vertical, ThemeSpacing.md)
 
                 // Rhythm sections (in ScrollView)
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: ThemeSpacing.lg) {
                         // Incomplete rhythms
                         if !incompleteRhythms.isEmpty {
                             RhythmSection(
@@ -98,10 +99,11 @@ struct TodayView: View {
                             )
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                    .padding(.horizontal, ThemeSpacing.md)
+                    .padding(.bottom, ThemeSpacing.md)
                 }
             }
+            .background(ThemeColors.bgPrimary(colorScheme))
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 50)
@@ -111,7 +113,7 @@ struct TodayView: View {
 
                         // Only trigger if horizontal swipe is dominant
                         if abs(horizontalAmount) > abs(verticalAmount) {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(ThemeAnimation.standardEase) {
                                 if horizontalAmount < 0 {
                                     // Swipe left -> next day
                                     selectedDate = selectedDate.adding(days: 1)
@@ -133,6 +135,7 @@ struct TodayView: View {
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
+                            .foregroundStyle(ThemeColors.accentGold)
                     }
                 }
             }
@@ -192,38 +195,40 @@ struct TodayView: View {
 // MARK: - Date Selector
 
 struct DateSelectorView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var selectedDate: Date
     @State private var showingCalendar = false
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: ThemeSpacing.md) {
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     selectedDate = selectedDate.adding(days: -1)
                 }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.title2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
 
             Button {
                 showingCalendar = true
             } label: {
-                VStack(spacing: 4) {
-                    HStack(spacing: 6) {
+                VStack(spacing: ThemeSpacing.xs) {
+                    HStack(spacing: ThemeSpacing.sm) {
                         Text(selectedDate.displayString)
-                            .font(.headline)
+                            .font(ThemeTypography.titleMedium)
+                            .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                         Image(systemName: "calendar")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .font(ThemeTypography.bodyMedium)
+                            .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     }
 
                     if !selectedDate.isToday {
                         Text(selectedDate, style: .date)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(ThemeTypography.caption)
+                            .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     }
                 }
             }
@@ -231,16 +236,16 @@ struct DateSelectorView: View {
             .frame(minWidth: 120)
 
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     selectedDate = selectedDate.adding(days: 1)
                 }
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.title2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, ThemeSpacing.sm)
         .sheet(isPresented: $showingCalendar) {
             CalendarPickerView(selectedDate: $selectedDate)
                 .presentationDetents([.medium, .large])
@@ -251,6 +256,8 @@ struct DateSelectorView: View {
 // MARK: - Rhythm Section
 
 struct RhythmSection: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let title: String
     let rhythms: [Rhythm]
     let selectedDate: Date
@@ -258,12 +265,13 @@ struct RhythmSection: View {
     var isCompleted: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(isCompleted ? .secondary : .primary)
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
+            Text(title.uppercased())
+                .font(ThemeTypography.sectionLabel)
+                .tracking(ThemeTypography.sectionLabelTracking)
+                .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textSecondary(colorScheme))
 
-            VStack(spacing: 8) {
+            VStack(spacing: ThemeSpacing.sm) {
                 ForEach(rhythms, id: \.id) { rhythm in
                     TodayRhythmCard(
                         rhythm: rhythm,
@@ -279,6 +287,8 @@ struct RhythmSection: View {
 // MARK: - Empty State
 
 struct EmptyTodayView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let selectedDate: Date
     let onAddTap: () -> Void
 
@@ -287,32 +297,29 @@ struct EmptyTodayView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ThemeSpacing.md) {
             Image(systemName: isPastDate ? "calendar" : "leaf.fill")
                 .font(.system(size: 50))
-                .foregroundStyle(isPastDate ? Color.secondary : Color.green.opacity(0.6))
+                .foregroundStyle(isPastDate ? ThemeColors.textMuted(colorScheme) : ThemeColors.accentGold.opacity(0.7))
 
             Text("No rhythms scheduled")
-                .font(.title3)
-                .fontWeight(.medium)
+                .font(ThemeTypography.titleMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Text(isPastDate
                  ? "No rhythms were scheduled for this day"
                  : "Add a rhythm to start tracking your daily routines")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.bodyMedium)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 .multilineTextAlignment(.center)
 
             if !isPastDate {
-                Button(action: onAddTap) {
-                    Label("Add Rhythm", systemImage: "plus.circle.fill")
-                        .font(.headline)
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.top, 8)
+                GoldButton("Add Rhythm", icon: "plus.circle.fill", action: onAddTap)
+                    .padding(.top, ThemeSpacing.sm)
+                    .frame(maxWidth: 200)
             }
         }
-        .padding(40)
+        .padding(ThemeSpacing.xl)
     }
 }
 

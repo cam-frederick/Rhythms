@@ -10,6 +10,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Query(sort: \Category.sortOrder) private var categories: [Category]
 
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
@@ -24,6 +25,7 @@ struct SettingsView: View {
             // General Section
             Section("General") {
                 Toggle("Haptic Feedback", isOn: $hapticsEnabled)
+                    .tint(ThemeColors.accentGold)
 
                 Picker("Week Starts On", selection: $weekStartsOnMonday) {
                     Text("Sunday").tag(false)
@@ -42,16 +44,18 @@ struct SettingsView: View {
                                 .font(.title2)
 
                             Text(category.name)
-                                .foregroundStyle(.primary)
+                                .font(ThemeTypography.bodyLarge)
+                                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                             Spacer()
 
                             Text("\(category.rhythms.count)")
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.bodyMedium)
+                                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
 
                             Image(systemName: "chevron.right")
                                 .font(.caption)
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(ThemeColors.textMuted(colorScheme))
                         }
                     }
                     .buttonStyle(.plain)
@@ -63,6 +67,7 @@ struct SettingsView: View {
                     showingAddCategory = true
                 } label: {
                     Label("Add Category", systemImage: "plus.circle.fill")
+                        .foregroundStyle(ThemeColors.accentGold)
                 }
             } header: {
                 HStack {
@@ -78,16 +83,22 @@ struct SettingsView: View {
             Section("About") {
                 HStack {
                     Text("Version")
+                        .font(ThemeTypography.bodyLarge)
+                        .foregroundStyle(ThemeColors.textPrimary(colorScheme))
                     Spacer()
                     Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.bodyMedium)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
 
                 HStack {
                     Text("Build")
+                        .font(ThemeTypography.bodyLarge)
+                        .foregroundStyle(ThemeColors.textPrimary(colorScheme))
                     Spacer()
                     Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.bodyMedium)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
             }
 
@@ -97,9 +108,12 @@ struct SettingsView: View {
                     showingResetConfirmation = true
                 } label: {
                     Label("Reset All Data", systemImage: "trash")
+                        .foregroundStyle(ThemeColors.destructive(colorScheme))
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(ThemeColors.bgPrimary(colorScheme))
         .navigationTitle("Settings")
         .sheet(isPresented: $showingAddCategory) {
             CategoryEditorView(mode: .create)

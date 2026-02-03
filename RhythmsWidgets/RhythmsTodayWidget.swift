@@ -58,47 +58,51 @@ struct TodayWidgetEntry: TimelineEntry {
 // MARK: - Widget View
 
 struct TodayWidgetView: View {
+    @Environment(\.colorScheme) var colorScheme
     var entry: TodayWidgetEntry
 
     private let maxVisibleRhythms = 4
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: WidgetTheme.spacingSM) {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Today")
-                        .font(.headline)
+                        .font(WidgetTheme.titleSmall)
+                        .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                     Text(entry.data.date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 }
 
                 Spacer()
 
                 // Progress indicator
-                HStack(spacing: 4) {
+                HStack(spacing: WidgetTheme.spacingXS) {
                     Image(systemName: entry.data.isAllComplete ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(entry.data.isAllComplete ? .green : .secondary)
+                        .foregroundStyle(entry.data.isAllComplete ? WidgetTheme.accentGold : WidgetTheme.textSecondary(colorScheme))
                     Text("\(entry.data.completedCount)/\(entry.data.totalCount)")
-                        .font(.subheadline.bold())
+                        .font(WidgetTheme.labelMedium)
+                        .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                 }
             }
 
             Divider()
+                .overlay(WidgetTheme.borderSubtle(colorScheme))
 
             // Rhythms list
             if entry.data.rhythms.isEmpty {
                 Spacer()
                 HStack {
                     Spacer()
-                    VStack(spacing: 4) {
+                    VStack(spacing: WidgetTheme.spacingXS) {
                         Image(systemName: "checkmark.circle")
                             .font(.title2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(WidgetTheme.accentGold.opacity(0.7))
                         Text("No rhythms today")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(WidgetTheme.caption)
+                            .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                     }
                     Spacer()
                 }
@@ -112,8 +116,8 @@ struct TodayWidgetView: View {
                     // Show overflow count if needed
                     if entry.data.rhythms.count > maxVisibleRhythms {
                         Text("+\(entry.data.rhythms.count - maxVisibleRhythms) more")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(WidgetTheme.caption)
+                            .foregroundStyle(WidgetTheme.textMuted(colorScheme))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
@@ -122,10 +126,10 @@ struct TodayWidgetView: View {
     }
 
     private func rhythmRow(_ rhythm: RhythmWidgetItem) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: WidgetTheme.spacingSM) {
             // Completion indicator
             Image(systemName: rhythm.isCompleted ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(rhythm.isCompleted ? Color(hex: rhythm.colorHex) ?? .green : .secondary)
+                .foregroundStyle(rhythm.isCompleted ? Color(hex: rhythm.colorHex) ?? WidgetTheme.accentGold : WidgetTheme.textSecondary(colorScheme))
                 .font(.body)
 
             // Emoji
@@ -134,10 +138,10 @@ struct TodayWidgetView: View {
 
             // Title
             Text(rhythm.title)
-                .font(.subheadline)
+                .font(WidgetTheme.bodyMedium)
                 .lineLimit(1)
-                .strikethrough(rhythm.isCompleted, color: .secondary)
-                .foregroundStyle(rhythm.isCompleted ? .secondary : .primary)
+                .strikethrough(rhythm.isCompleted, color: WidgetTheme.textSecondary(colorScheme))
+                .foregroundStyle(rhythm.isCompleted ? WidgetTheme.textSecondary(colorScheme) : WidgetTheme.textPrimary(colorScheme))
 
             Spacer()
 
@@ -146,9 +150,10 @@ struct TodayWidgetView: View {
                 HStack(spacing: 2) {
                     Image(systemName: "flame.fill")
                         .font(.caption2)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(WidgetTheme.accentGold)
                     Text("\(rhythm.streak)")
                         .font(.caption2.bold())
+                        .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                 }
             }
         }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StatsTabView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedSection: StatsSection = .overview
 
     enum StatsSection: String, CaseIterable {
@@ -25,7 +26,7 @@ struct StatsTabView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .padding()
+            .padding(ThemeSpacing.md)
 
             // Content
             Group {
@@ -35,13 +36,14 @@ struct StatsTabView: View {
                 case .calendar:
                     ScrollView {
                         CalendarHeatMapView()
-                            .padding()
+                            .padding(ThemeSpacing.md)
                     }
                 case .insights:
                     InsightsView()
                 }
             }
         }
+        .background(ThemeColors.bgPrimary(colorScheme))
         .navigationTitle("Stats")
         .navigationBarTitleDisplayMode(.inline)
     }

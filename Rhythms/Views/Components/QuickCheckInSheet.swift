@@ -14,6 +14,7 @@ struct QuickCheckInSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.hapticService) private var hapticService
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var note: String = ""
     @State private var selectedMood: Mood?
@@ -22,7 +23,7 @@ struct QuickCheckInSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: ThemeSpacing.lg) {
                     // Rhythm header
                     rhythmHeader
 
@@ -35,8 +36,9 @@ struct QuickCheckInSheet: View {
                     // Complete button
                     completeButton
                 }
-                .padding()
+                .padding(ThemeSpacing.md)
             }
+            .background(ThemeColors.bgPrimary(colorScheme))
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Check In")
             .navigationBarTitleDisplayMode(.inline)
@@ -45,6 +47,7 @@ struct QuickCheckInSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
@@ -53,6 +56,7 @@ struct QuickCheckInSheet: View {
                         onComplete(nil, nil)
                         dismiss()
                     }
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
                 }
 
                 ToolbarItem(placement: .keyboard) {
@@ -69,28 +73,29 @@ struct QuickCheckInSheet: View {
     // MARK: - Rhythm Header
 
     private var rhythmHeader: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ThemeSpacing.sm) {
             Text(rhythm.emoji)
                 .font(.system(size: 48))
 
             Text(rhythm.title)
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(ThemeTypography.titleMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Text(date.formatted(date: .abbreviated, time: .omitted))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.bodyMedium)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
         }
     }
 
     // MARK: - Mood Selector
 
     private var moodSelector: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
             Text("How are you feeling?")
-                .font(.headline)
+                .font(ThemeTypography.titleSmall)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
-            HStack(spacing: 12) {
+            HStack(spacing: ThemeSpacing.sm) {
                 ForEach(Mood.allCases) { mood in
                     moodButton(mood)
                 }
@@ -100,7 +105,7 @@ struct QuickCheckInSheet: View {
 
     private func moodButton(_ mood: Mood) -> some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(ThemeAnimation.standardEase) {
                 if selectedMood == mood {
                     selectedMood = nil
                 } else {
@@ -109,22 +114,22 @@ struct QuickCheckInSheet: View {
                 }
             }
         } label: {
-            VStack(spacing: 4) {
+            VStack(spacing: ThemeSpacing.xs) {
                 Text(mood.emoji)
                     .font(.system(size: 32))
 
                 Text(mood.label)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(selectedMood == mood ? mood.color.opacity(0.2) : Color(.tertiarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(selectedMood == mood ? mood.color : Color.clear, lineWidth: 2)
-            }
+            .padding(.vertical, ThemeSpacing.sm)
+            .background(selectedMood == mood ? mood.color.opacity(0.2) : ThemeColors.bgSecondary(colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.large))
+            .overlay(
+                RoundedRectangle(cornerRadius: ThemeRadius.large)
+                    .stroke(selectedMood == mood ? mood.color : ThemeColors.borderSubtle(colorScheme), lineWidth: selectedMood == mood ? ThemeBorder.thick : ThemeBorder.thin)
+            )
         }
         .buttonStyle(.plain)
     }
@@ -132,15 +137,21 @@ struct QuickCheckInSheet: View {
     // MARK: - Note Input
 
     private var noteInput: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
             Text("Add a note (optional)")
-                .font(.headline)
+                .font(ThemeTypography.titleSmall)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             TextField("How did it go?", text: $note, axis: .vertical)
                 .textFieldStyle(.plain)
-                .padding()
-                .background(Color(.tertiarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .font(ThemeTypography.bodyMedium)
+                .padding(ThemeSpacing.md)
+                .background(ThemeColors.bgSecondary(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.large))
+                .overlay(
+                    RoundedRectangle(cornerRadius: ThemeRadius.large)
+                        .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+                )
                 .focused($isNoteFocused)
                 .lineLimit(3...6)
         }
@@ -158,12 +169,12 @@ struct QuickCheckInSheet: View {
                 Image(systemName: "checkmark.circle.fill")
                 Text("Complete")
             }
-            .font(.headline)
-            .foregroundStyle(.white)
+            .font(ThemeTypography.labelLarge)
+            .foregroundStyle(colorScheme == .dark ? .black : .white)
             .frame(maxWidth: .infinity)
-            .padding()
-            .background(rhythm.color)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .padding(ThemeSpacing.md)
+            .background(ThemeColors.accentGold)
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
         }
     }
 }

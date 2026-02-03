@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: Tab = .today
 
     enum Tab: String, CaseIterable {
@@ -43,19 +44,20 @@ struct MainTabView: View {
             NavigationStack {
                 StatsTabView()
             }
-                .tabItem {
-                    Label(Tab.stats.rawValue, systemImage: Tab.stats.icon)
-                }
-                .tag(Tab.stats)
+            .tabItem {
+                Label(Tab.stats.rawValue, systemImage: Tab.stats.icon)
+            }
+            .tag(Tab.stats)
 
             NavigationStack {
                 SettingsView()
             }
-                .tabItem {
-                    Label(Tab.settings.rawValue, systemImage: Tab.settings.icon)
-                }
-                .tag(Tab.settings)
+            .tabItem {
+                Label(Tab.settings.rawValue, systemImage: Tab.settings.icon)
+            }
+            .tag(Tab.settings)
         }
+        .tint(ThemeColors.accentGold)
     }
 }
 

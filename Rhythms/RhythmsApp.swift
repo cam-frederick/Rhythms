@@ -34,6 +34,7 @@ struct RhythmsApp: App {
             ContentView()
                 .modelContainer(modelContainer)
                 .withAppEnvironment(appEnvironment)
+                .rhythmsTheme()
                 .task {
                     await appEnvironment.notificationService.registerNotificationCategories()
                 }

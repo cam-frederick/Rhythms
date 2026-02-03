@@ -13,13 +13,14 @@ import SwiftData
 struct SmartNoteInputView: View {
     @Bindable var rhythm: Rhythm
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var parsingService = NoteParsingService()
 
     @State private var inputText: String = ""
     @FocusState private var isInputFocused: Bool
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ThemeSpacing.md) {
             // Smart Input Field
             inputField
 
@@ -39,6 +40,7 @@ struct SmartNoteInputView: View {
             if !parsingService.parsedNotes.isEmpty {
                 ParsedNotesPreviewView(
                     previews: parsingService.parsedNotes,
+                    colorScheme: colorScheme,
                     onConfirm: saveNotes,
                     onCancel: {
                         parsingService.clearParsedNotes()
@@ -46,27 +48,29 @@ struct SmartNoteInputView: View {
                 )
             }
         }
-        .padding()
+        .padding(ThemeSpacing.md)
     }
 
     // MARK: - Input Field
 
     private var inputField: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: ThemeSpacing.sm) {
             Image(systemName: "sparkles")
-                .foregroundStyle(.purple)
+                .foregroundStyle(ThemeColors.accentGold)
                 .font(.title3)
-                .padding(.top, 8)
+                .padding(.top, ThemeSpacing.sm)
 
             ZStack(alignment: .topLeading) {
                 if inputText.isEmpty {
                     Text("Describe your schedule...")
-                        .foregroundStyle(.tertiary)
-                        .padding(.top, 8)
-                        .padding(.leading, 4)
+                        .font(ThemeTypography.bodyMedium)
+                        .foregroundStyle(ThemeColors.textMuted(colorScheme))
+                        .padding(.top, ThemeSpacing.sm)
+                        .padding(.leading, ThemeSpacing.xs)
                 }
 
                 TextEditor(text: $inputText)
+                    .font(ThemeTypography.bodyMedium)
                     .frame(minHeight: 36, maxHeight: 100)
                     .scrollContentBackground(.hidden)
                     .focused($isInputFocused)
@@ -84,17 +88,21 @@ struct SmartNoteInputView: View {
                     parsingService.clearParsedNotes()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 8)
+                .padding(.top, ThemeSpacing.sm)
             }
         }
-        .padding()
+        .padding(ThemeSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: ThemeRadius.large)
+                .fill(ThemeColors.bgSecondary(colorScheme))
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.large)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Parse Button
@@ -103,35 +111,39 @@ struct SmartNoteInputView: View {
         Button {
             parseInput()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: ThemeSpacing.sm) {
                 if parsingService.isParsing {
                     ProgressView()
                         .scaleEffect(0.8)
+                        .tint(colorScheme == .dark ? .black : .white)
                 } else {
                     Image(systemName: "wand.and.stars")
                 }
                 Text(parsingService.isParsing ? "Parsing..." : "Parse Notes")
+                    .font(ThemeTypography.labelLarge)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, ThemeSpacing.sm)
+            .foregroundStyle(colorScheme == .dark ? .black : .white)
+            .background(ThemeColors.accentGold)
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
         }
-        .buttonStyle(.borderedProminent)
-        .tint(.purple)
+        .buttonStyle(.plain)
         .disabled(parsingService.isParsing)
     }
 
     // MARK: - Unavailable View
 
     private var unavailableView: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: ThemeSpacing.sm) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(.yellow)
+                .foregroundStyle(ThemeColors.accentGold)
 
             Text(unavailabilityMessage)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
         }
-        .padding(.horizontal)
+        .padding(.horizontal, ThemeSpacing.md)
     }
 
     private var unavailabilityMessage: String {
@@ -150,15 +162,15 @@ struct SmartNoteInputView: View {
     // MARK: - Error View
 
     private func errorView(_ error: NoteParsingService.NoteParsingError) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: ThemeSpacing.sm) {
             Image(systemName: "exclamationmark.circle.fill")
-                .foregroundStyle(.red)
+                .foregroundStyle(ThemeColors.destructive(colorScheme))
 
             Text(error.localizedDescription)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
         }
-        .padding(.horizontal)
+        .padding(.horizontal, ThemeSpacing.md)
     }
 
     // MARK: - Actions

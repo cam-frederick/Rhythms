@@ -13,6 +13,7 @@ struct RhythmDetailView: View {
     @Bindable var rhythm: Rhythm
     @Environment(\.modelContext) private var modelContext
     @Environment(\.hapticService) private var hapticService
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var showingEditor = false
     @State private var showingNotes = false
@@ -34,7 +35,7 @@ struct RhythmDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: ThemeSpacing.lg) {
                 // Header card
                 headerCard
 
@@ -50,8 +51,9 @@ struct RhythmDetailView: View {
                 // Notes section
                 notesSection
             }
-            .padding()
+            .padding(ThemeSpacing.md)
         }
+        .background(ThemeColors.bgPrimary(colorScheme))
         .navigationTitle(rhythm.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -60,6 +62,7 @@ struct RhythmDetailView: View {
                     showingEditor = true
                 } label: {
                     Text("Edit")
+                        .foregroundStyle(ThemeColors.accentGold)
                 }
             }
         }
@@ -78,94 +81,102 @@ struct RhythmDetailView: View {
     // MARK: - Header Card
 
     private var headerCard: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ThemeSpacing.md) {
             // Emoji and title
             Text(rhythm.emoji)
                 .font(.system(size: 64))
 
-            VStack(spacing: 4) {
+            VStack(spacing: ThemeSpacing.xs) {
                 Text(rhythm.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(ThemeTypography.displaySmall)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                 Text(rhythm.schedule.displayName)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
 
             // Category badge
             if let category = rhythm.category {
-                HStack(spacing: 4) {
+                HStack(spacing: ThemeSpacing.xs) {
                     Text(category.emoji)
                     Text(category.name)
                 }
-                .font(.caption)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color(.tertiarySystemGroupedBackground))
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                .padding(.horizontal, ThemeSpacing.sm)
+                .padding(.vertical, ThemeSpacing.xs)
+                .background(ThemeColors.bgSecondary(colorScheme))
                 .clipShape(Capsule())
             }
         }
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(ThemeSpacing.md)
         .background(rhythm.color.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xlarge))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Stats Overview
 
     private var statsOverview: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: ThemeSpacing.md) {
             statCard(
                 title: "Current Streak",
                 value: "\(rhythm.currentStreak)",
-                icon: "flame.fill",
-                color: .orange
+                icon: "flame.fill"
             )
 
             statCard(
                 title: "Best Streak",
                 value: "\(rhythm.longestStreak)",
-                icon: "trophy.fill",
-                color: .yellow
+                icon: "trophy.fill"
             )
 
             statCard(
                 title: "Total",
                 value: "\(rhythm.totalCompletions)",
-                icon: "checkmark.circle.fill",
-                color: .green
+                icon: "checkmark.circle.fill"
             )
         }
     }
 
-    private func statCard(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(spacing: 8) {
+    private func statCard(title: String, value: String, icon: String) -> some View {
+        VStack(spacing: ThemeSpacing.sm) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(color)
+                .foregroundStyle(ThemeColors.accentGold)
 
             Text(value)
-                .font(.title)
-                .fontWeight(.bold)
+                .font(ThemeTypography.numericMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
         }
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(ThemeSpacing.md)
+        .background(ThemeColors.bgCard(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.large))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.large)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Completion History Section
 
     private var completionHistorySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
             HStack {
-                Text("Completion History")
-                    .font(.headline)
+                Text("COMPLETION HISTORY")
+                    .font(ThemeTypography.sectionLabel)
+                    .tracking(ThemeTypography.sectionLabelTracking)
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
                 Spacer()
 
@@ -180,9 +191,13 @@ struct RhythmDetailView: View {
 
             completionChart
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(ThemeSpacing.md)
+        .background(ThemeColors.bgCard(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xlarge))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     private var completionChart: some View {
@@ -193,7 +208,8 @@ struct RhythmDetailView: View {
                 x: .value("Date", point.date, unit: .day),
                 y: .value("Completed", point.completed ? 1 : 0)
             )
-            .foregroundStyle(point.completed ? rhythm.color.gradient : Color.gray.opacity(0.3).gradient)
+            .foregroundStyle(point.completed ? ThemeColors.accentGold.gradient : ThemeColors.bgSecondary(colorScheme).gradient)
+            .cornerRadius(ThemeRadius.small)
         }
         .frame(height: 120)
         .chartYAxis(.hidden)
@@ -215,9 +231,11 @@ struct RhythmDetailView: View {
     // MARK: - Recent Completions Section
 
     private var recentCompletionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Recent Activity")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
+            Text("RECENT ACTIVITY")
+                .font(ThemeTypography.sectionLabel)
+                .tracking(ThemeTypography.sectionLabelTracking)
+                .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
             let recentEntries = rhythm.entries
                 .sorted { $0.completedAt > $1.completedAt }
@@ -225,19 +243,20 @@ struct RhythmDetailView: View {
 
             if recentEntries.isEmpty {
                 Text("No completions yet")
-                    .foregroundStyle(.secondary)
-                    .padding()
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                    .padding(ThemeSpacing.md)
             } else {
                 ForEach(Array(recentEntries)) { entry in
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(entry.scheduledDate.formatted(date: .abbreviated, time: .omitted))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
+                                .font(ThemeTypography.bodyMedium)
+                                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                             Text("Completed \(entry.completedAt.formatted(.relative(presentation: .named)))")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                         }
 
                         Spacer()
@@ -249,29 +268,37 @@ struct RhythmDetailView: View {
 
                         if entry.note != nil {
                             Image(systemName: "note.text")
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(ThemeColors.textMuted(colorScheme))
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding(.vertical, ThemeSpacing.sm)
 
                     if entry.id != recentEntries.last?.id {
-                        Divider()
+                        Rectangle()
+                            .fill(ThemeColors.borderSubtle(colorScheme))
+                            .frame(height: ThemeBorder.thin)
                     }
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(ThemeSpacing.md)
+        .background(ThemeColors.bgCard(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xlarge))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Notes Section
 
     private var notesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
             HStack {
-                Text("Scheduled Notes")
-                    .font(.headline)
+                Text("SCHEDULED NOTES")
+                    .font(ThemeTypography.sectionLabel)
+                    .tracking(ThemeTypography.sectionLabelTracking)
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
                 Spacer()
 
@@ -279,36 +306,39 @@ struct RhythmDetailView: View {
                     showingNotes = true
                 } label: {
                     Text("Manage")
-                        .font(.subheadline)
+                        .font(ThemeTypography.labelMedium)
+                        .foregroundStyle(ThemeColors.accentGold)
                 }
             }
 
             if rhythm.notes.isEmpty {
                 Text("No notes configured")
-                    .foregroundStyle(.secondary)
-                    .padding()
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                    .padding(ThemeSpacing.md)
             } else {
                 ForEach(rhythm.notes.sorted { $0.sortOrder < $1.sortOrder }.prefix(5)) { note in
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(note.content)
-                                .font(.subheadline)
+                                .font(ThemeTypography.bodyMedium)
+                                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
                                 .lineLimit(2)
 
                             Text(note.scheduleDescription)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                         }
 
                         Spacer()
 
                         if note.isRecurring {
                             Image(systemName: "repeat")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textMuted(colorScheme))
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, ThemeSpacing.xs)
                 }
 
                 if rhythm.notes.count > 5 {
@@ -316,14 +346,19 @@ struct RhythmDetailView: View {
                         showingNotes = true
                     } label: {
                         Text("View all \(rhythm.notes.count) notes")
-                            .font(.caption)
+                            .font(ThemeTypography.caption)
+                            .foregroundStyle(ThemeColors.accentGold)
                     }
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(ThemeSpacing.md)
+        .background(ThemeColors.bgCard(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xlarge))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Helper Methods

@@ -58,14 +58,16 @@ struct DetailWidgetEntry: TimelineEntry {
 // MARK: - Widget View
 
 struct DetailWidgetView: View {
+    @Environment(\.colorScheme) var colorScheme
     var entry: DetailWidgetEntry
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: WidgetTheme.spacingSM) {
             // Header with date and progress
             headerSection
 
             Divider()
+                .overlay(WidgetTheme.borderSubtle(colorScheme))
 
             // Main content
             if entry.data.rhythms.isEmpty {
@@ -81,18 +83,19 @@ struct DetailWidgetView: View {
     private var headerSection: some View {
         HStack(alignment: .top) {
             // Date and status
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: WidgetTheme.spacingXS) {
                 Text(entry.data.date.formatted(date: .complete, time: .omitted))
-                    .font(.headline)
+                    .font(WidgetTheme.titleSmall)
+                    .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
 
                 if entry.data.isAllComplete {
                     Label("All rhythms complete!", systemImage: "star.fill")
-                        .font(.caption)
-                        .foregroundStyle(.yellow)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.accentGold)
                 } else if entry.data.remainingCount > 0 {
                     Text("\(entry.data.remainingCount) rhythm\(entry.data.remainingCount == 1 ? "" : "s") remaining")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 }
             }
 
@@ -101,42 +104,33 @@ struct DetailWidgetView: View {
             // Progress ring
             ZStack {
                 Circle()
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 6)
+                    .stroke(WidgetTheme.borderSubtle(colorScheme), lineWidth: 6)
 
                 Circle()
                     .trim(from: 0, to: entry.data.completionRate)
                     .stroke(
-                        progressColor,
+                        WidgetTheme.accentGold,
                         style: StrokeStyle(lineWidth: 6, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
 
                 VStack(spacing: 0) {
                     Text("\(Int(entry.data.completionRate * 100))")
-                        .font(.system(.title3, design: .rounded).bold())
+                        .font(WidgetTheme.numericMedium)
+                        .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                     Text("%")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 }
             }
             .frame(width: 60, height: 60)
         }
     }
 
-    private var progressColor: Color {
-        switch entry.data.completionRate {
-        case 1.0: return .green
-        case 0.75..<1.0: return .mint
-        case 0.5..<0.75: return .yellow
-        case 0.25..<0.5: return .orange
-        default: return .red
-        }
-    }
-
     // MARK: - Rhythms List Section
 
     private var rhythmsListSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: WidgetTheme.spacingSM) {
             // Incomplete rhythms (highlighted)
             let incompleteRhythms = entry.data.rhythms.filter { !$0.isCompleted }
             let completedRhythms = entry.data.rhythms.filter { $0.isCompleted }
@@ -144,8 +138,9 @@ struct DetailWidgetView: View {
             if !incompleteRhythms.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("TO DO")
-                        .font(.caption.bold())
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.sectionLabel)
+                        .foregroundStyle(WidgetTheme.textMuted(colorScheme))
+                        .tracking(2)
 
                     ForEach(incompleteRhythms.prefix(4)) { rhythm in
                         incompleteRhythmRow(rhythm)
@@ -153,8 +148,8 @@ struct DetailWidgetView: View {
 
                     if incompleteRhythms.count > 4 {
                         Text("+\(incompleteRhythms.count - 4) more")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(WidgetTheme.caption)
+                            .foregroundStyle(WidgetTheme.textMuted(colorScheme))
                     }
                 }
             }
@@ -162,8 +157,9 @@ struct DetailWidgetView: View {
             if !completedRhythms.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("COMPLETED")
-                        .font(.caption.bold())
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.sectionLabel)
+                        .foregroundStyle(WidgetTheme.textMuted(colorScheme))
+                        .tracking(2)
 
                     ForEach(completedRhythms.prefix(3)) { rhythm in
                         completedRhythmRow(rhythm)
@@ -171,8 +167,8 @@ struct DetailWidgetView: View {
 
                     if completedRhythms.count > 3 {
                         Text("+\(completedRhythms.count - 3) more")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(WidgetTheme.caption)
+                            .foregroundStyle(WidgetTheme.textMuted(colorScheme))
                     }
                 }
             }
@@ -187,18 +183,19 @@ struct DetailWidgetView: View {
             Text(rhythm.emoji)
                 .font(.title3)
                 .frame(width: 36, height: 36)
-                .background(Color(hex: rhythm.colorHex)?.opacity(0.15) ?? Color.gray.opacity(0.15))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .background(Color(hex: rhythm.colorHex)?.opacity(0.15) ?? WidgetTheme.bgSecondary(colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: WidgetTheme.radiusMedium))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(rhythm.title)
-                    .font(.subheadline.weight(.medium))
+                    .font(WidgetTheme.labelMedium)
+                    .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                     .lineLimit(1)
 
                 if let note = rhythm.note {
                     Text(note)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(WidgetTheme.caption)
+                        .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                         .lineLimit(1)
                 }
             }
@@ -209,30 +206,31 @@ struct DetailWidgetView: View {
             if rhythm.streak > 0 {
                 HStack(spacing: 2) {
                     Image(systemName: "flame.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(WidgetTheme.accentGold)
                     Text("\(rhythm.streak)")
                         .fontWeight(.semibold)
+                        .foregroundStyle(WidgetTheme.textPrimary(colorScheme))
                 }
-                .font(.caption)
+                .font(WidgetTheme.caption)
             }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
-        .background(Color(hex: rhythm.colorHex)?.opacity(0.08) ?? Color.gray.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(.vertical, WidgetTheme.spacingXS)
+        .padding(.horizontal, WidgetTheme.spacingSM)
+        .background(Color(hex: rhythm.colorHex)?.opacity(0.08) ?? WidgetTheme.bgSecondary(colorScheme).opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: WidgetTheme.radiusMedium))
     }
 
     private func completedRhythmRow(_ rhythm: RhythmWidgetItem) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: WidgetTheme.spacingSM) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(Color(hex: rhythm.colorHex) ?? .green)
+                .foregroundStyle(Color(hex: rhythm.colorHex) ?? WidgetTheme.accentGold)
                 .font(.body)
 
             Text(rhythm.emoji)
 
             Text(rhythm.title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(WidgetTheme.caption)
+                .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
                 .lineLimit(1)
 
             Spacer()
@@ -240,11 +238,11 @@ struct DetailWidgetView: View {
             if rhythm.streak > 0 {
                 HStack(spacing: 2) {
                     Image(systemName: "flame.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(WidgetTheme.accentGold)
                     Text("\(rhythm.streak)")
+                        .foregroundStyle(WidgetTheme.textMuted(colorScheme))
                 }
                 .font(.caption2)
-                .foregroundStyle(.secondary)
             }
         }
     }
@@ -252,20 +250,20 @@ struct DetailWidgetView: View {
     // MARK: - Empty State
 
     private var emptyStateView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: WidgetTheme.spacingSM) {
             Spacer()
 
             Image(systemName: "moon.stars.fill")
                 .font(.system(size: 40))
-                .foregroundStyle(.secondary.opacity(0.5))
+                .foregroundStyle(WidgetTheme.accentGold.opacity(0.5))
 
             Text("No rhythms scheduled")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(WidgetTheme.bodyMedium)
+                .foregroundStyle(WidgetTheme.textSecondary(colorScheme))
 
             Text("Enjoy your free day!")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .font(WidgetTheme.caption)
+                .foregroundStyle(WidgetTheme.textMuted(colorScheme))
 
             Spacer()
         }

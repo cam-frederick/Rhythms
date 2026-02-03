@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct CalendarHeatMapView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Query(filter: #Predicate<Rhythm> { !$0.isArchived }) private var rhythms: [Rhythm]
     @State private var selectedMonth: Date = Date()
     @State private var selectedDate: Date?
@@ -17,7 +18,7 @@ struct CalendarHeatMapView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ThemeSpacing.md) {
             // Month navigation
             monthHeader
 
@@ -35,9 +36,13 @@ struct CalendarHeatMapView: View {
                 selectedDateDetails(for: date)
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(ThemeSpacing.md)
+        .background(ThemeColors.bgCard(colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.xlarge))
+        .overlay(
+            RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
+                .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
+        )
     }
 
     // MARK: - Month Header
@@ -45,28 +50,31 @@ struct CalendarHeatMapView: View {
     private var monthHeader: some View {
         HStack {
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     selectedMonth = calendar.date(byAdding: .month, value: -1, to: selectedMonth) ?? selectedMonth
                 }
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.headline)
+                    .font(ThemeTypography.labelLarge)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
 
             Spacer()
 
             Text(selectedMonth.formatted(.dateTime.month(.wide).year()))
-                .font(.headline)
+                .font(ThemeTypography.titleMedium)
+                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Spacer()
 
             Button {
-                withAnimation {
+                withAnimation(ThemeAnimation.standardEase) {
                     selectedMonth = calendar.date(byAdding: .month, value: 1, to: selectedMonth) ?? selectedMonth
                 }
             } label: {
                 Image(systemName: "chevron.right")
-                    .font(.headline)
+                    .font(ThemeTypography.labelLarge)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
             .disabled(calendar.isDate(selectedMonth, equalTo: Date(), toGranularity: .month))
         }
@@ -78,9 +86,8 @@ struct CalendarHeatMapView: View {
         LazyVGrid(columns: columns, spacing: 4) {
             ForEach(calendar.shortWeekdaySymbols, id: \.self) { day in
                 Text(day.prefix(1))
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
                     .frame(maxWidth: .infinity)
             }
         }
@@ -110,28 +117,28 @@ struct CalendarHeatMapView: View {
         let isFuture = date > Date()
 
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(ThemeAnimation.standardEase) {
                 selectedDate = selectedDate?.isSameDay(as: date) == true ? nil : date
             }
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: ThemeRadius.small)
                     .fill(isFuture ? Color.clear : heatColor(for: completionRate))
 
                 Text("\(calendar.component(.day, from: date))")
-                    .font(.caption)
+                    .font(ThemeTypography.caption)
                     .fontWeight(isToday ? .bold : .regular)
-                    .foregroundStyle(isFuture ? Color.secondary.opacity(0.3) : Color.primary)
+                    .foregroundStyle(isFuture ? ThemeColors.textMuted(colorScheme).opacity(0.3) : ThemeColors.textPrimary(colorScheme))
             }
             .aspectRatio(1, contentMode: .fit)
             .overlay {
                 if isToday {
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.accentColor, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: ThemeRadius.small)
+                        .stroke(ThemeColors.accentGold, lineWidth: ThemeBorder.thick)
                 }
                 if isSelected {
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.primary, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: ThemeRadius.small)
+                        .stroke(ThemeColors.textPrimary(colorScheme), lineWidth: ThemeBorder.thick)
                 }
             }
         }
@@ -142,20 +149,20 @@ struct CalendarHeatMapView: View {
     // MARK: - Legend
 
     private var legend: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: ThemeSpacing.xs) {
             Text("Less")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
             ForEach([0.0, 0.1, 0.3, 0.6, 0.8, 1.0], id: \.self) { value in
-                RoundedRectangle(cornerRadius: 2)
+                RoundedRectangle(cornerRadius: ThemeRadius.small)
                     .fill(heatColor(for: value))
                     .frame(width: 14, height: 14)
             }
 
             Text("More")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .font(ThemeTypography.caption)
+                .foregroundStyle(ThemeColors.textMuted(colorScheme))
         }
     }
 
@@ -165,34 +172,38 @@ struct CalendarHeatMapView: View {
         let scheduledRhythms = rhythms.filter { $0.isScheduledFor(date: date) }
         let completedRhythms = scheduledRhythms.filter { $0.isCompleted(on: date) }
 
-        return VStack(alignment: .leading, spacing: 8) {
-            Divider()
+        return VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
+            Rectangle()
+                .fill(ThemeColors.borderSubtle(colorScheme))
+                .frame(height: ThemeBorder.thin)
 
             HStack {
                 Text(date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.headline)
+                    .font(ThemeTypography.titleSmall)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                 Spacer()
 
                 Text("\(completedRhythms.count)/\(scheduledRhythms.count) completed")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.bodySmall)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
 
             if scheduledRhythms.isEmpty {
                 Text("No rhythms scheduled")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             } else {
                 ForEach(scheduledRhythms) { rhythm in
-                    HStack(spacing: 8) {
+                    HStack(spacing: ThemeSpacing.sm) {
                         Image(systemName: rhythm.isCompleted(on: date) ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(rhythm.isCompleted(on: date) ? .green : .secondary)
+                            .foregroundStyle(rhythm.isCompleted(on: date) ? ThemeColors.accentGold : ThemeColors.textMuted(colorScheme))
 
                         Text(rhythm.emoji)
 
                         Text(rhythm.title)
-                            .font(.subheadline)
+                            .font(ThemeTypography.bodyMedium)
+                            .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                         Spacer()
 
@@ -242,17 +253,17 @@ struct CalendarHeatMapView: View {
     private func heatColor(for rate: Double) -> Color {
         switch rate {
         case 0:
-            return Color(.systemGray5)
+            return ThemeColors.bgSecondary(colorScheme)
         case 0..<0.25:
-            return Color.red.opacity(0.4)
+            return ThemeColors.accentGold.opacity(0.2)
         case 0.25..<0.5:
-            return Color.orange.opacity(0.5)
+            return ThemeColors.accentGold.opacity(0.35)
         case 0.5..<0.75:
-            return Color.yellow.opacity(0.6)
+            return ThemeColors.accentGold.opacity(0.5)
         case 0.75..<1.0:
-            return Color.mint.opacity(0.6)
+            return ThemeColors.accentGold.opacity(0.7)
         default:
-            return Color.green.opacity(0.7)
+            return ThemeColors.accentGold.opacity(0.9)
         }
     }
 }

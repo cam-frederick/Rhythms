@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct DailyProgressRing: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let progress: Double
     let completedCount: Int
     let totalCount: Int
@@ -18,73 +20,64 @@ struct DailyProgressRing: View {
         min(max(progress, 0), 1)
     }
 
-    private var ringColor: Color {
-        switch displayProgress {
-        case 1.0:
-            return .green
-        case 0.5..<1.0:
-            return .blue
-        case 0.0..<0.5:
-            return .orange
-        default:
-            return .gray
-        }
-    }
-
     var body: some View {
         ZStack {
             // Background ring
             Circle()
                 .stroke(
-                    Color.secondary.opacity(0.2),
+                    ThemeColors.bgSecondary(colorScheme),
                     lineWidth: 16
                 )
 
-            // Progress ring
+            // Progress ring - gold accent
             Circle()
                 .trim(from: 0, to: animatedProgress)
                 .stroke(
-                    ringColor,
+                    ThemeColors.accentGold,
                     style: StrokeStyle(
                         lineWidth: 16,
                         lineCap: .round
                     )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.spring(duration: 0.8), value: animatedProgress)
 
             // Center content
-            VStack(spacing: 8) {
+            VStack(spacing: ThemeSpacing.sm) {
                 if totalCount > 0 {
                     Text("\(completedCount)/\(totalCount)")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(ThemeTypography.numericLarge)
+                        .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                     Text(statusText)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.bodyMedium)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 } else {
                     Image(systemName: "moon.zzz.fill")
                         .font(.system(size: 36))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
                     Text("No rhythms today")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(ThemeTypography.bodyMedium)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 }
             }
         }
-        .padding()
+        .padding(ThemeSpacing.md)
         .onAppear {
-            animatedProgress = displayProgress
+            withAnimation(ThemeAnimation.smoothEase) {
+                animatedProgress = displayProgress
+            }
         }
         .onChange(of: progress) { _, newValue in
-            animatedProgress = min(max(newValue, 0), 1)
+            withAnimation(ThemeAnimation.smoothEase) {
+                animatedProgress = min(max(newValue, 0), 1)
+            }
         }
     }
 
     private var statusText: String {
         if displayProgress == 1.0 {
-            return "All done! 🎉"
+            return "All done!"
         } else if displayProgress >= 0.5 {
             return "Keep going!"
         } else if completedCount > 0 {
@@ -98,6 +91,8 @@ struct DailyProgressRing: View {
 // MARK: - Mini Progress Ring (for list views)
 
 struct MiniProgressRing: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let progress: Double
     let size: CGFloat
 
@@ -105,31 +100,18 @@ struct MiniProgressRing: View {
         min(max(progress, 0), 1)
     }
 
-    private var ringColor: Color {
-        switch displayProgress {
-        case 1.0:
-            return .green
-        case 0.5..<1.0:
-            return .blue
-        case 0.0..<0.5:
-            return .orange
-        default:
-            return .gray
-        }
-    }
-
     var body: some View {
         ZStack {
             Circle()
                 .stroke(
-                    Color.secondary.opacity(0.2),
+                    ThemeColors.bgSecondary(colorScheme),
                     lineWidth: size / 8
                 )
 
             Circle()
                 .trim(from: 0, to: displayProgress)
                 .stroke(
-                    ringColor,
+                    ThemeColors.accentGold,
                     style: StrokeStyle(
                         lineWidth: size / 8,
                         lineCap: .round
@@ -140,10 +122,11 @@ struct MiniProgressRing: View {
             if displayProgress == 1.0 {
                 Image(systemName: "checkmark")
                     .font(.system(size: size / 3, weight: .bold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(ThemeColors.accentGold)
             } else {
                 Text("\(Int(displayProgress * 100))%")
                     .font(.system(size: size / 4, weight: .semibold, design: .rounded))
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
             }
         }
         .frame(width: size, height: size)

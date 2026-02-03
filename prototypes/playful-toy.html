@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythms - Playful/Toy Style</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1625;
+            --bg-secondary: #231e30;
+            --bg-card: #2d2640;
+            --bg-elevated: #3a3250;
+
+            --text-primary: #ffffff;
+            --text-secondary: #b8b0c8;
+            --text-muted: #6d6580;
+
+            --accent-lime: #c8ff00;
+            --accent-pink: #ff4d8d;
+            --accent-yellow: #ffdd00;
+            --accent-cyan: #00e5ff;
+            --accent-orange: #ff7b00;
+
+            --border-thick: 3px;
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+
+            --shadow-chunky: 6px 6px 0 rgba(0, 0, 0, 0.3);
+            --shadow-pop: 4px 4px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            border-radius: 44px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+            border: 4px solid var(--bg-elevated);
+        }
+
+        /* Playful background decorations */
+        .decoration {
+            position: absolute;
+            z-index: 0;
+        }
+
+        .decoration.star {
+            font-size: 24px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        .decoration.star:nth-child(1) { top: 80px; right: 30px; animation-delay: 0s; }
+        .decoration.star:nth-child(2) { top: 200px; left: 20px; animation-delay: 0.5s; font-size: 18px; }
+        .decoration.star:nth-child(3) { bottom: 300px; right: 40px; animation-delay: 1s; font-size: 20px; }
+
+        .decoration.dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .decoration.dot:nth-child(4) { top: 150px; right: 60px; background: var(--accent-pink); }
+        .decoration.dot:nth-child(5) { top: 350px; left: 30px; background: var(--accent-cyan); }
+        .decoration.dot:nth-child(6) { bottom: 200px; left: 50px; background: var(--accent-yellow); }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.2) rotate(10deg); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 60px 18px 18px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--accent-lime);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .date-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            background: var(--accent-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--bg-primary);
+            border: var(--border-thick) solid var(--bg-primary);
+            box-shadow: var(--shadow-pop);
+            transition: all 0.2s ease;
+        }
+
+        .avatar:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        /* Date Selector */
+        .date-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding: 4px;
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            min-width: 54px;
+            cursor: pointer;
+            border: var(--border-thick) solid transparent;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .date-item:hover {
+            transform: translateY(-4px) rotate(-2deg);
+            background: var(--bg-elevated);
+        }
+
+        .date-item.active {
+            background: var(--accent-yellow);
+            border-color: var(--bg-primary);
+            box-shadow: var(--shadow-pop);
+            transform: translateY(-2px);
+        }
+
+        .date-item.active .day-name,
+        .date-item.active .day-num {
+            color: var(--bg-primary);
+        }
+
+        .day-name {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .day-num {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        /* Progress Ring Section */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: var(--border-thick) solid var(--accent-lime);
+            box-shadow: var(--shadow-chunky);
+            position: relative;
+        }
+
+        .progress-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent-pink);
+            color: var(--bg-primary);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border: 2px solid var(--bg-primary);
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-title {
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .progress-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .progress-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-ring {
+            width: 160px;
+            height: 160px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: var(--bg-elevated);
+            stroke-width: 16;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: var(--accent-lime);
+            stroke-width: 16;
+            stroke-linecap: round;
+            stroke-dasharray: 408.4;
+            stroke-dashoffset: 122.5;
+            animation: ringBounce 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            filter: drop-shadow(0 0 10px rgba(200, 255, 0, 0.5));
+        }
+
+        @keyframes ringBounce {
+            0% { stroke-dashoffset: 408.4; }
+            70% { stroke-dashoffset: 100; }
+            85% { stroke-dashoffset: 140; }
+            100% { stroke-dashoffset: 122.5; }
+        }
+
+        .progress-center {
+            position: absolute;
+            text-align: center;
+        }
+
+        .progress-percent {
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--accent-lime);
+            line-height: 1;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Rhythm Cards */
+        .rhythms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .rhythms-title {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .rhythm-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            border: var(--border-thick) solid transparent;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .rhythm-card:hover {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: var(--shadow-chunky);
+        }
+
+        .rhythm-card.lime { border-color: var(--accent-lime); }
+        .rhythm-card.pink { border-color: var(--accent-pink); }
+        .rhythm-card.yellow { border-color: var(--accent-yellow); }
+        .rhythm-card.cyan { border-color: var(--accent-cyan); }
+
+        .rhythm-card.completed {
+            opacity: 0.6;
+        }
+
+        .rhythm-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            border: 2px solid var(--bg-primary);
+        }
+
+        .rhythm-card.lime .rhythm-icon { background: var(--accent-lime); }
+        .rhythm-card.pink .rhythm-icon { background: var(--accent-pink); }
+        .rhythm-card.yellow .rhythm-icon { background: var(--accent-yellow); }
+        .rhythm-card.cyan .rhythm-icon { background: var(--accent-cyan); }
+
+        .rhythm-info {
+            flex: 1;
+        }
+
+        .rhythm-name {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .rhythm-streak {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .streak-fire {
+            font-size: 16px;
+            animation: fireWiggle 0.5s ease-in-out infinite;
+        }
+
+        @keyframes fireWiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .check-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: var(--border-thick) solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg-elevated);
+        }
+
+        .check-btn:hover {
+            transform: scale(1.15) rotate(-5deg);
+            border-color: var(--accent-lime);
+        }
+
+        .check-btn.checked {
+            background: var(--accent-lime);
+            border-color: var(--bg-primary);
+            transform: scale(1.1);
+        }
+
+        .check-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--bg-primary);
+            stroke-width: 4;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .check-btn.checked svg {
+            opacity: 1;
+        }
+
+        /* Quick Check-In Sheet */
+        .sheet-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .sheet-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .check-in-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 11;
+            border: var(--border-thick) solid var(--accent-cyan);
+            border-bottom: none;
+        }
+
+        .sheet-overlay.active + .check-in-sheet,
+        .check-in-sheet.active {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 50px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 10px;
+            margin: 0 auto 20px;
+        }
+
+        .sheet-title {
+            font-size: 28px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .sheet-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .mood-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .mood-option {
+            width: 58px;
+            height: 58px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            border: var(--border-thick) solid transparent;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mood-option:hover {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .mood-option.selected {
+            background: var(--accent-yellow);
+            border-color: var(--bg-primary);
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: var(--shadow-pop);
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 18px;
+            border: var(--border-thick) solid var(--bg-primary);
+            border-radius: var(--radius-md);
+            background: var(--accent-pink);
+            color: var(--bg-primary);
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-pop);
+        }
+
+        .complete-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .complete-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        /* Style Label */
+        .style-label {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-yellow);
+            color: var(--bg-primary);
+            padding: 10px 24px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            z-index: 100;
+            border: 3px solid var(--bg-primary);
+            box-shadow: var(--shadow-pop);
+        }
+    </style>
+</head>
+<body>
+    <div class="style-label">Playful / Toy Style</div>
+
+    <div class="phone-frame">
+        <div class="decoration star">✦</div>
+        <div class="decoration star">✦</div>
+        <div class="decoration star">✦</div>
+        <div class="decoration dot"></div>
+        <div class="decoration dot"></div>
+        <div class="decoration dot"></div>
+
+        <div class="content">
+            <div class="header">
+                <div>
+                    <div class="greeting">Hey there! 👋</div>
+                    <div class="date-title">Today</div>
+                </div>
+                <div class="avatar">CF</div>
+            </div>
+
+            <div class="date-selector">
+                <div class="date-item">
+                    <span class="day-name">Mon</span>
+                    <span class="day-num">27</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Tue</span>
+                    <span class="day-num">28</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Wed</span>
+                    <span class="day-num">29</span>
+                </div>
+                <div class="date-item active">
+                    <span class="day-name">Thu</span>
+                    <span class="day-num">30</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Fri</span>
+                    <span class="day-num">31</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Sat</span>
+                    <span class="day-num">1</span>
+                </div>
+                <div class="date-item">
+                    <span class="day-name">Sun</span>
+                    <span class="day-num">2</span>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-badge">On Fire! 🔥</div>
+                <div class="progress-header">
+                    <div class="progress-title">Daily Progress</div>
+                    <div class="progress-subtitle">5 of 7 rhythms done!</div>
+                </div>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" viewBox="0 0 160 160">
+                        <circle class="progress-ring-bg" cx="80" cy="80" r="65"/>
+                        <circle class="progress-ring-fill" cx="80" cy="80" r="65"/>
+                    </svg>
+                    <div class="progress-center">
+                        <div class="progress-percent">70%</div>
+                        <div class="progress-label">Complete</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rhythms-header">
+                <div class="rhythms-title">Your Rhythms</div>
+                <div class="see-all">See all →</div>
+            </div>
+
+            <div class="rhythm-card lime" onclick="openSheet(this)">
+                <div class="rhythm-icon">🧘</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Morning Meditation</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 12 day streak!</div>
+                </div>
+                <div class="check-btn checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card pink" onclick="openSheet(this)">
+                <div class="rhythm-icon">💪</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Workout</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 8 day streak!</div>
+                </div>
+                <div class="check-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card yellow" onclick="openSheet(this)">
+                <div class="rhythm-icon">📚</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Read 30 minutes</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 21 day streak!</div>
+                </div>
+                <div class="check-btn checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="rhythm-card cyan" onclick="openSheet(this)">
+                <div class="rhythm-icon">💤</div>
+                <div class="rhythm-info">
+                    <div class="rhythm-name">Sleep by 11pm</div>
+                    <div class="rhythm-streak"><span class="streak-fire">🔥</span> 5 day streak!</div>
+                </div>
+                <div class="check-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="sheet-overlay" onclick="closeSheet()"></div>
+        <div class="check-in-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">How ya feeling? 😄</div>
+            <div class="sheet-subtitle">Pick your mood for today's check-in</div>
+
+            <div class="mood-selector">
+                <div class="mood-option" onclick="selectMood(this)">😢</div>
+                <div class="mood-option" onclick="selectMood(this)">😕</div>
+                <div class="mood-option selected" onclick="selectMood(this)">😊</div>
+                <div class="mood-option" onclick="selectMood(this)">😄</div>
+                <div class="mood-option" onclick="selectMood(this)">🤩</div>
+            </div>
+
+            <button class="complete-btn" onclick="completeCheckIn()">Done! ✓</button>
+        </div>
+    </div>
+
+    <script>
+        function openSheet(card) {
+            document.querySelector('.sheet-overlay').classList.add('active');
+            document.querySelector('.check-in-sheet').classList.add('active');
+        }
+
+        function closeSheet() {
+            document.querySelector('.sheet-overlay').classList.remove('active');
+            document.querySelector('.check-in-sheet').classList.remove('active');
+        }
+
+        function selectMood(el) {
+            document.querySelectorAll('.mood-option').forEach(m => m.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function completeCheckIn() {
+            closeSheet();
+        }
+
+        document.querySelectorAll('.date-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('checked');
+            });
+        });
+    </script>
+</body>
+</html>

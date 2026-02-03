@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SchedulePickerView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var schedule: RhythmSchedule
 
     @State private var selectedType: ScheduleType = .daily
@@ -51,6 +52,8 @@ struct SchedulePickerView: View {
                 configurationSection
                 previewSection
             }
+            .scrollContentBackground(.hidden)
+            .background(ThemeColors.bgPrimary(colorScheme))
             .navigationTitle("Schedule")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -59,6 +62,7 @@ struct SchedulePickerView: View {
                         dismiss()
                     }
                     .fontWeight(.semibold)
+                    .foregroundStyle(ThemeColors.accentGold)
                 }
             }
             .onAppear {
@@ -74,6 +78,7 @@ struct SchedulePickerView: View {
                 ScheduleTypeRow(
                     type: type,
                     isSelected: selectedType == type,
+                    colorScheme: colorScheme,
                     onTap: {
                         selectedType = type
                         updateScheduleForType(type)
@@ -109,8 +114,8 @@ struct SchedulePickerView: View {
             Section("Frequency") {
                 Stepper("\(timesPerWeek) times per week", value: $timesPerWeek, in: 1...7)
                 Text("Complete on any \(timesPerWeek) days of your choice each week")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
             .onChange(of: timesPerWeek) { _, newValue in
                 schedule = .timesPerWeek(count: newValue)
@@ -121,8 +126,8 @@ struct SchedulePickerView: View {
             Section("Frequency") {
                 Stepper("\(timesPerMonth) times per month", value: $timesPerMonth, in: 1...31)
                 Text("Complete on any \(timesPerMonth) days of your choice each month")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
             .onChange(of: timesPerMonth) { _, newValue in
                 schedule = .timesPerMonth(count: newValue)
@@ -140,8 +145,8 @@ struct SchedulePickerView: View {
                 .frame(height: 120)
 
                 Text("Great for monthly bills, rent, or subscriptions")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
             .onChange(of: dayOfMonth) { _, newValue in
                 schedule = .dayOfMonth(day: newValue)
@@ -164,9 +169,10 @@ struct SchedulePickerView: View {
         Section("Preview") {
             HStack {
                 Image(systemName: "info.circle")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textMuted(colorScheme))
                 Text(schedule.displayName)
-                    .foregroundStyle(.secondary)
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
             }
         }
     }
@@ -227,23 +233,25 @@ struct SchedulePickerView: View {
 struct ScheduleTypeRow: View {
     let type: SchedulePickerView.ScheduleType
     let isSelected: Bool
+    let colorScheme: ColorScheme
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack {
                 Image(systemName: type.icon)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                     .frame(width: 24)
 
                 Text(type.rawValue)
-                    .foregroundStyle(.primary)
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
                 Spacer()
 
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(ThemeColors.accentGold)
                 }
             }
         }
@@ -254,12 +262,13 @@ struct ScheduleTypeRow: View {
 // MARK: - Weekday Selector
 
 struct WeekdaySelector: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var selectedDays: Set<Weekday>
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: ThemeSpacing.sm) {
             ForEach(Weekday.allCases) { day in
-                WeekdayButton(day: day, isSelected: selectedDays.contains(day)) {
+                WeekdayButton(day: day, isSelected: selectedDays.contains(day), colorScheme: colorScheme) {
                     if selectedDays.contains(day) {
                         selectedDays.remove(day)
                     } else {
@@ -268,22 +277,23 @@ struct WeekdaySelector: View {
                 }
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, ThemeSpacing.sm)
     }
 }
 
 struct WeekdayButton: View {
     let day: Weekday
     let isSelected: Bool
+    let colorScheme: ColorScheme
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             Text(day.singleLetter)
-                .font(.headline)
+                .font(ThemeTypography.labelLarge)
                 .frame(width: 36, height: 36)
-                .foregroundStyle(isSelected ? .white : .primary)
-                .background(isSelected ? Color.accentColor : Color.secondary.opacity(0.2))
+                .foregroundStyle(isSelected ? (colorScheme == .dark ? .black : .white) : ThemeColors.textPrimary(colorScheme))
+                .background(isSelected ? ThemeColors.accentGold : ThemeColors.bgSecondary(colorScheme))
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)
