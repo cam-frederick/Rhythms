@@ -29,6 +29,10 @@ struct OnboardingView: View {
     @State private var hasRequestedNotifications = false
     @State private var pageOffset: CGFloat = 0
 
+    // Haptic generators
+    private let pageHaptic = UIImpactFeedbackGenerator(style: .light)
+    private let completionHaptic = UINotificationFeedbackGenerator()
+
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             emoji: "🌅",
@@ -72,6 +76,7 @@ struct OnboardingView: View {
                     Spacer()
                     if currentPage < pages.count - 1 {
                         Button("Skip") {
+                            pageHaptic.impactOccurred(intensity: 0.5)
                             withAnimation(.easeInOut(duration: 0.4)) {
                                 currentPage = pages.count - 1
                             }
@@ -95,6 +100,9 @@ struct OnboardingView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: currentPage)
+                .onChange(of: currentPage) { _, _ in
+                    pageHaptic.impactOccurred()
+                }
 
                 // Bottom controls
                 VStack(spacing: 24) {
@@ -133,6 +141,7 @@ struct OnboardingView: View {
                             }
 
                             Button {
+                                completionHaptic.notificationOccurred(.success)
                                 withAnimation(.easeInOut(duration: 0.4)) {
                                     isPresented = false
                                 }
@@ -151,6 +160,7 @@ struct OnboardingView: View {
                         }
                     } else {
                         Button {
+                            pageHaptic.impactOccurred(intensity: 0.7)
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                 currentPage += 1
                             }
