@@ -1,0 +1,47 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gold accent gradient matching the app theme -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4b96e"/>
+      <stop offset="50%" style="stop-color:#c9a962"/>
+      <stop offset="100%" style="stop-color:#b89b55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background - for tinted mode -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="#0c0c0c"/>
+
+  <!-- Metronome body - gold outline style for tinted appearance -->
+  <path d="M 512 160 L 750 800 L 274 800 Z"
+        fill="none"
+        stroke="url(#goldGradient)"
+        stroke-width="24"/>
+
+  <!-- Scale markings on left side -->
+  <line x1="420" y1="400" x2="455" y2="400" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="410" y1="480" x2="450" y2="480" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="395" y1="560" x2="440" y2="560" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  <line x1="385" y1="640" x2="435" y2="640" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="370" y1="720" x2="425" y2="720" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Scale markings on right side -->
+  <line x1="569" y1="400" x2="604" y2="400" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="574" y1="480" x2="614" y2="480" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="584" y1="560" x2="629" y2="560" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  <line x1="589" y1="640" x2="639" y2="640" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="599" y1="720" x2="654" y2="720" stroke="#c9a962" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Pendulum arm -->
+  <rect x="498" y="200" width="28" height="520" rx="14" fill="url(#goldGradient)"/>
+
+  <!-- Pendulum weight -->
+  <rect x="462" y="400" width="100" height="60" rx="10" fill="url(#goldGradient)"/>
+  <rect x="472" y="410" width="80" height="40" rx="6" fill="#0c0c0c" opacity="0.4"/>
+
+  <!-- Top pivot point -->
+  <circle cx="512" cy="200" r="32" fill="url(#goldGradient)"/>
+  <circle cx="512" cy="200" r="14" fill="#0c0c0c" opacity="0.5"/>
+
+  <!-- Base -->
+  <rect x="290" y="785" width="444" height="28" rx="14" fill="url(#goldGradient)"/>
+</svg>
