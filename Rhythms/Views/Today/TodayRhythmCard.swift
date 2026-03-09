@@ -14,6 +14,9 @@ struct TodayRhythmCard: View {
     let selectedDate: Date
     let onToggle: () -> Void
 
+    @State private var checkmarkScale: CGFloat = 1.0
+    @State private var celebrationOpacity: Double = 0
+
     private var isCompleted: Bool {
         rhythm.isCompleted(on: selectedDate)
     }
@@ -23,7 +26,25 @@ struct TodayRhythmCard: View {
     }
 
     var body: some View {
-        Button(action: onToggle) {
+        Button(action: {
+            onToggle()
+            if !isCompleted {
+                // Trigger spring pop when completing (will appear completed after toggle)
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
+                    checkmarkScale = 1.4
+                }
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.55).delay(0.1)) {
+                    checkmarkScale = 1.0
+                }
+                // Brief celebration sparkle
+                withAnimation(.easeOut(duration: 0.15)) {
+                    celebrationOpacity = 1
+                }
+                withAnimation(.easeOut(duration: 0.5).delay(0.15)) {
+                    celebrationOpacity = 0
+                }
+            }
+        }) {
             HStack(spacing: ThemeSpacing.md) {
                 // Completion checkbox
                 ZStack {
@@ -35,11 +56,20 @@ struct TodayRhythmCard: View {
                         Circle()
                             .fill(rhythm.color)
                             .frame(width: 28, height: 28)
+                            .scaleEffect(checkmarkScale)
 
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(colorScheme == .dark ? .black : .white)
+                            .scaleEffect(checkmarkScale)
                     }
+
+                    // Sparkle overlay on completion
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 22))
+                        .foregroundStyle(rhythm.color)
+                        .opacity(celebrationOpacity)
+                        .scaleEffect(celebrationOpacity == 1 ? 1.2 : 0.8)
                 }
 
                 // Rhythm info
@@ -102,7 +132,7 @@ struct TodayRhythmCard: View {
             )
         }
         .buttonStyle(.plain)
-        .animation(ThemeAnimation.standardEase, value: isCompleted)
+        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isCompleted)
     }
 }
 

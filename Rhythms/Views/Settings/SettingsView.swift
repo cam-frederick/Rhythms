@@ -7,18 +7,40 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.notificationService) private var notificationService
     @Query(sort: \Category.sortOrder) private var categories: [Category]
 
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("weekStartsOnMonday") private var weekStartsOnMonday = true
+    @AppStorage("globalReminderEnabled") private var globalReminderEnabled = false
+    @AppStorage("globalReminderTimeInterval") private var globalReminderTimeInterval: Double = 9 * 3600 // 9:00 AM
 
     @State private var showingAddCategory = false
     @State private var showingResetConfirmation = false
     @State private var categoryToEdit: Category?
+    @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    @State private var showPermissionDeniedAlert = false
+
+    private var globalReminderTime: Binding<Date> {
+        Binding(
+            get: {
+                let midnight = Calendar.current.startOfDay(for: Date())
+                return midnight.addingTimeInterval(globalReminderTimeInterval)
+            },
+            set: { newDate in
+                let midnight = Calendar.current.startOfDay(for: newDate)
+                globalReminderTimeInterval = newDate.timeIntervalSince(midnight)
+                if globalReminderEnabled {
+                    scheduleGlobalReminder()
+                }
+            }
+        )
+    }
 
     var body: some View {
         List {
@@ -31,6 +53,53 @@ struct SettingsView: View {
                     Text("Sunday").tag(false)
                     Text("Monday").tag(true)
                 }
+            }
+
+            // Notifications Section
+            Section {
+                Toggle("Daily Check-In Reminder", isOn: $globalReminderEnabled)
+                    .tint(ThemeColors.accentGold)
+                    .onChange(of: globalReminderEnabled) { _, enabled in
+                        if enabled {
+                            requestPermissionAndSchedule()
+                        } else {
+                            cancelGlobalReminder()
+                        }
+                    }
+
+                if globalReminderEnabled {
+                    DatePicker(
+                        "Reminder Time",
+                        selection: globalReminderTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .tint(ThemeColors.accentGold)
+
+                    if notificationStatus == .denied {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .font(.callout)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Notifications Disabled")
+                                    .font(ThemeTypography.bodyMedium)
+                                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+                                Button("Open Settings") {
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                                .font(ThemeTypography.bodySmall)
+                                .foregroundStyle(ThemeColors.accentGold)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            } header: {
+                Text("Notifications")
+            } footer: {
+                Text("Get a daily nudge to check in with your rhythms. Individual rhythms can also have their own reminder times.")
             }
 
             // Categories Section
@@ -115,6 +184,21 @@ struct SettingsView: View {
         .scrollContentBackground(.hidden)
         .background(ThemeColors.bgPrimary(colorScheme))
         .navigationTitle("Settings")
+        .onAppear {
+            checkNotificationStatus()
+        }
+        .alert("Notifications Disabled", isPresented: $showPermissionDeniedAlert) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                globalReminderEnabled = false
+            }
+        } message: {
+            Text("Please enable notifications in Settings to receive daily reminders.")
+        }
         .sheet(isPresented: $showingAddCategory) {
             CategoryEditorView(mode: .create)
         }
@@ -154,6 +238,74 @@ struct SettingsView: View {
         }
         try? modelContext.save()
     }
+
+    // MARK: - Notification Helpers
+
+    private func checkNotificationStatus() {
+        Task {
+            notificationStatus = await notificationService.authorizationStatus
+        }
+    }
+
+    private func requestPermissionAndSchedule() {
+        Task {
+            do {
+                let granted = try await notificationService.requestPermission()
+                notificationStatus = await notificationService.authorizationStatus
+                if granted {
+                    scheduleGlobalReminder()
+                } else {
+                    await MainActor.run {
+                        globalReminderEnabled = false
+                        notificationStatus = .denied
+                        showPermissionDeniedAlert = true
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    globalReminderEnabled = false
+                }
+            }
+        }
+    }
+
+    private func scheduleGlobalReminder() {
+        Task {
+            // Build a UNMutableNotificationContent for the daily check-in
+            let content = UNMutableNotificationContent()
+            content.title = "Daily Rhythm Check-In"
+            content.body = "Time to check in with your rhythms and keep your streaks alive! 🔥"
+            content.sound = .default
+            content.categoryIdentifier = "DAILY_CHECKIN"
+
+            let midnight = Calendar.current.startOfDay(for: Date())
+            let reminderDate = midnight.addingTimeInterval(globalReminderTimeInterval)
+            let components = Calendar.current.dateComponents([.hour, .minute], from: reminderDate)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+
+            let request = UNNotificationRequest(
+                identifier: "global-daily-checkin",
+                content: content,
+                trigger: trigger
+            )
+
+            do {
+                let center = UNUserNotificationCenter.current()
+                center.removePendingNotificationRequests(withIdentifiers: ["global-daily-checkin"])
+                try await center.add(request)
+            } catch {
+                print("Failed to schedule global reminder: \(error)")
+            }
+        }
+    }
+
+    private func cancelGlobalReminder() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(
+            withIdentifiers: ["global-daily-checkin"]
+        )
+    }
+
+    // MARK: - Data Helpers
 
     private func resetAllData() {
         // Delete all rhythms (entries and notes cascade)
