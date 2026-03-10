@@ -21,6 +21,10 @@ struct TodayRhythmCard: View {
         rhythm.isCompleted(on: selectedDate)
     }
 
+    private var isMissed: Bool {
+        selectedDate.isPast && !selectedDate.isToday && !isCompleted
+    }
+
     private var todaysNote: RhythmNote? {
         rhythm.noteForDate(selectedDate)
     }
@@ -77,11 +81,29 @@ struct TodayRhythmCard: View {
                     HStack(spacing: ThemeSpacing.sm) {
                         Text(rhythm.emoji)
                             .font(.title3)
+                            .opacity(isMissed ? 0.5 : 1.0)
 
                         Text(rhythm.title)
                             .font(ThemeTypography.titleSmall)
-                            .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textPrimary(colorScheme))
+                            .foregroundStyle(
+                                isCompleted ? ThemeColors.textMuted(colorScheme) :
+                                isMissed ? ThemeColors.textMuted(colorScheme) :
+                                ThemeColors.textPrimary(colorScheme)
+                            )
                             .strikethrough(isCompleted, color: ThemeColors.textMuted(colorScheme))
+
+                        // Missed badge — small pill shown when past-day rhythm was skipped
+                        if isMissed {
+                            Text("Missed")
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textMuted(colorScheme))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule()
+                                        .fill(ThemeColors.bgSecondary(colorScheme))
+                                )
+                        }
                     }
 
                     // Show today's note if available
@@ -92,8 +114,8 @@ struct TodayRhythmCard: View {
                             .lineLimit(2)
                     }
 
-                    // Streak badge
-                    if rhythm.currentStreak > 0 {
+                    // Streak badge — only show for current/future day rhythms to avoid confusion
+                    if rhythm.currentStreak > 0 && !isMissed {
                         HStack(spacing: ThemeSpacing.xs) {
                             Image(systemName: "flame.fill")
                                 .font(ThemeTypography.caption)
@@ -121,14 +143,17 @@ struct TodayRhythmCard: View {
             .overlay(
                 RoundedRectangle(cornerRadius: ThemeRadius.large)
                     .stroke(
-                        isCompleted ? rhythm.color.opacity(0.3) : ThemeColors.borderSubtle(colorScheme),
+                        isCompleted ? rhythm.color.opacity(0.3) :
+                        isMissed ? ThemeColors.borderSubtle(colorScheme).opacity(0.5) :
+                        ThemeColors.borderSubtle(colorScheme),
                         lineWidth: ThemeBorder.thin
                     )
             )
+            .opacity(isMissed ? 0.7 : 1.0)
             .shadow(
-                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted ? 0 : 0.04),
-                radius: isCompleted ? 0 : 6,
-                y: isCompleted ? 0 : 2
+                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted || isMissed ? 0 : 0.04),
+                radius: isCompleted || isMissed ? 0 : 6,
+                y: isCompleted || isMissed ? 0 : 2
             )
         }
         .buttonStyle(.plain)
