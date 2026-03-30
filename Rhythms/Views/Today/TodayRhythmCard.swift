@@ -3,6 +3,7 @@
 //  Rhythms
 //
 //  Created by Cam Frederick on 12/27/25.
+//  Updated by Cici on 3/30/26 – note indicator + quick-add note from card.
 //
 
 import SwiftUI
@@ -16,6 +17,7 @@ struct TodayRhythmCard: View {
 
     @State private var checkmarkScale: CGFloat = 1.0
     @State private var celebrationOpacity: Double = 0
+    @State private var showingNoteEditor: Bool = false
 
     private var isCompleted: Bool {
         rhythm.isCompleted(on: selectedDate)
@@ -130,11 +132,36 @@ struct TodayRhythmCard: View {
 
                 Spacer()
 
-                // Category indicator
-                if let category = rhythm.category {
-                    Text(category.emoji)
-                        .font(.title3)
-                        .opacity(0.6)
+                // Trailing: note indicator + category
+                VStack(alignment: .trailing, spacing: ThemeSpacing.xs) {
+                    // Note button — shows pencil.badge if no note, note.text if note exists
+                    Button {
+                        showingNoteEditor = true
+                    } label: {
+                        Image(systemName: todaysNote != nil ? "note.text" : "square.and.pencil")
+                            .font(.system(size: 14))
+                            .foregroundStyle(
+                                todaysNote != nil
+                                ? rhythm.color
+                                : ThemeColors.textMuted(colorScheme).opacity(0.5)
+                            )
+                            .frame(width: 28, height: 28)
+                            .background(
+                                todaysNote != nil
+                                ? rhythm.color.opacity(0.12)
+                                : Color.clear
+                            )
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(todaysNote != nil ? "View or edit note" : "Add note")
+
+                    // Category indicator
+                    if let category = rhythm.category {
+                        Text(category.emoji)
+                            .font(.system(size: 14))
+                            .opacity(0.6)
+                    }
                 }
             }
             .padding(ThemeSpacing.md)
@@ -158,6 +185,14 @@ struct TodayRhythmCard: View {
         }
         .buttonStyle(.plain)
         .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isCompleted)
+        .sheet(isPresented: $showingNoteEditor) {
+            NavigationStack {
+                NoteEditorView(
+                    rhythm: rhythm,
+                    mode: todaysNote != nil ? .edit(todaysNote!) : .create
+                )
+            }
+        }
     }
 }
 
