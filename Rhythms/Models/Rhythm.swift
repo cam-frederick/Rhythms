@@ -52,6 +52,11 @@ final class Rhythm {
     var isPaused: Bool
     var pausedUntil: Date?
 
+    // MARK: - Display Order
+
+    /// User-defined sort order within the Today view (lower = higher in list)
+    var sortOrder: Int
+
     // MARK: - Tags
 
     var tags: [String]
@@ -87,6 +92,7 @@ final class Rhythm {
         self.reminderEnabled = false
         self.isArchived = false
         self.isPaused = false
+        self.sortOrder = Int.max  // new rhythms go to end by default
         self.tags = []
         self.entries = []
         self.notes = []
