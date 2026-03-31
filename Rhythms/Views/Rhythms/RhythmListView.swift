@@ -182,18 +182,49 @@ struct RhythmRowView: View {
 
     let rhythm: Rhythm
 
+    private var isCompletedToday: Bool {
+        rhythm.isScheduledFor(date: Date()) && rhythm.isCompleted(on: Date())
+    }
+
+    private var isScheduledToday: Bool {
+        rhythm.isScheduledFor(date: Date())
+    }
+
     var body: some View {
         HStack(spacing: ThemeSpacing.sm) {
-            // Emoji icon
-            Text(rhythm.emoji)
-                .font(.title2)
-                .frame(width: 40, height: 40)
-                .background(rhythm.color.opacity(0.15))
-                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
+            // Emoji icon with today-completion ring
+            ZStack {
+                // Outer ring — shown only when scheduled today
+                if isScheduledToday {
+                    Circle()
+                        .stroke(
+                            isCompletedToday ? rhythm.color : ThemeColors.borderSubtle(colorScheme),
+                            lineWidth: 2.5
+                        )
+                        .frame(width: 46, height: 46)
+                }
+
+                Text(rhythm.emoji)
+                    .font(.title2)
+                    .frame(width: 40, height: 40)
+                    .background(isCompletedToday ? rhythm.color.opacity(0.25) : rhythm.color.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
+
+                // Checkmark overlay when completed today
+                if isCompletedToday {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(rhythm.color)
+                        .background(Circle().fill(ThemeColors.bgCard(colorScheme)).frame(width: 14, height: 14))
+                        .frame(width: 14, height: 14)
+                        .offset(x: 14, y: 14)
+                }
+            }
+            .frame(width: 46, height: 46)
 
             // Info
             VStack(alignment: .leading, spacing: ThemeSpacing.xs) {
-                HStack {
+                HStack(spacing: 4) {
                     Text(rhythm.title)
                         .font(ThemeTypography.titleSmall)
                         .foregroundStyle(ThemeColors.textPrimary(colorScheme))
@@ -211,21 +242,47 @@ struct RhythmRowView: View {
                     }
                 }
 
-                Text(rhythm.schedule.displayName)
-                    .font(ThemeTypography.bodySmall)
-                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                HStack(spacing: 6) {
+                    Text(rhythm.schedule.displayName)
+                        .font(ThemeTypography.bodySmall)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+
+                    // Today status tag
+                    if isScheduledToday {
+                        Text(isCompletedToday ? "Done" : "Today")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(isCompletedToday ? .white : ThemeColors.accentGold)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(isCompletedToday ? rhythm.color : ThemeColors.accentGold.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
             }
 
             Spacer()
 
-            // Streak
-            if rhythm.currentStreak > 0 {
-                HStack(spacing: ThemeSpacing.xs) {
-                    Image(systemName: "flame.fill")
-                        .foregroundStyle(ThemeColors.accentGold)
-                    Text("\(rhythm.currentStreak)")
-                        .font(ThemeTypography.labelMedium)
-                        .foregroundStyle(ThemeColors.accentGold)
+            // Streak badge — shown only when streak ≥ 3
+            if rhythm.currentStreak >= 3 {
+                VStack(spacing: 2) {
+                    HStack(spacing: 3) {
+                        Text("🔥")
+                            .font(.system(size: 14))
+                        Text("\(rhythm.currentStreak)")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.orange.opacity(0.2), ThemeColors.accentGold.opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(Capsule())
+                    .overlay(Capsule().stroke(Color.orange.opacity(0.3), lineWidth: 1))
                 }
             }
         }
