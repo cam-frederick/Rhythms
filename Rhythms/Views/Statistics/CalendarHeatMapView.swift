@@ -13,6 +13,7 @@ struct CalendarHeatMapView: View {
     @Query(filter: #Predicate<Rhythm> { !$0.isArchived }) private var rhythms: [Rhythm]
     @State private var selectedMonth: Date = Date()
     @State private var selectedDate: Date?
+    @State private var cellsAppeared: Bool = false
 
     private let calendar = Calendar.current
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
@@ -31,6 +32,7 @@ struct CalendarHeatMapView: View {
             // Legend
             legend
 
+
             // Selected date details
             if let date = selectedDate {
                 selectedDateDetails(for: date)
@@ -43,6 +45,18 @@ struct CalendarHeatMapView: View {
             RoundedRectangle(cornerRadius: ThemeRadius.xlarge)
                 .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
         )
+        .onAppear {
+            cellsAppeared = false
+            withAnimation(.easeOut(duration: 0.1)) {
+                cellsAppeared = true
+            }
+        }
+        .onChange(of: selectedMonth) { _, _ in
+            cellsAppeared = false
+            withAnimation(.easeOut(duration: 0.15)) {
+                cellsAppeared = true
+            }
+        }
     }
 
     // MARK: - Month Header
@@ -99,9 +113,9 @@ struct CalendarHeatMapView: View {
         let days = daysInMonth()
 
         return LazyVGrid(columns: columns, spacing: 4) {
-            ForEach(days, id: \.self) { date in
+            ForEach(Array(days.enumerated()), id: \.offset) { index, date in
                 if let date = date {
-                    dayCell(for: date)
+                    dayCell(for: date, index: index)
                 } else {
                     Color.clear
                         .aspectRatio(1, contentMode: .fit)
@@ -110,7 +124,7 @@ struct CalendarHeatMapView: View {
         }
     }
 
-    private func dayCell(for date: Date) -> some View {
+    private func dayCell(for date: Date, index: Int = 0) -> some View {
         let completionRate = completionRate(for: date)
         let isToday = calendar.isDateInToday(date)
         let isSelected = selectedDate?.isSameDay(as: date) == true
@@ -144,6 +158,13 @@ struct CalendarHeatMapView: View {
         }
         .buttonStyle(.plain)
         .disabled(isFuture)
+        .opacity(cellsAppeared ? 1 : 0)
+        .scaleEffect(cellsAppeared ? 1 : 0.6)
+        .animation(
+            .spring(response: 0.35, dampingFraction: 0.7)
+            .delay(Double(index) * 0.012),
+            value: cellsAppeared
+        )
     }
 
     // MARK: - Legend
