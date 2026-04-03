@@ -14,6 +14,8 @@ struct TodayRhythmCard: View {
     let selectedDate: Date
     let onToggle: () -> Void
 
+    @State private var checkmarkScale: CGFloat = 1.0
+
     private var isCompleted: Bool {
         rhythm.isCompleted(on: selectedDate)
     }
@@ -23,7 +25,16 @@ struct TodayRhythmCard: View {
     }
 
     var body: some View {
-        Button(action: onToggle) {
+        Button(action: {
+            if !isCompleted {
+                // Trigger spring animation before toggling
+                checkmarkScale = 0
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    checkmarkScale = 1.0
+                }
+            }
+            onToggle()
+        }) {
             HStack(spacing: ThemeSpacing.md) {
                 // Completion checkbox
                 ZStack {
@@ -39,6 +50,8 @@ struct TodayRhythmCard: View {
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(colorScheme == .dark ? .black : .white)
+                            .scaleEffect(checkmarkScale)
+                            .animation(.spring(response: 0.4, dampingFraction: 0.6), value: isCompleted)
                     }
                 }
 
@@ -96,13 +109,19 @@ struct TodayRhythmCard: View {
                     )
             )
             .shadow(
-                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted ? 0 : 0.04),
-                radius: isCompleted ? 0 : 6,
+                color: isCompleted
+                    ? Color.green.opacity(0.25)
+                    : (colorScheme == .dark ? .clear : .black.opacity(0.04)),
+                radius: isCompleted ? 8 : 6,
                 y: isCompleted ? 0 : 2
             )
         }
         .buttonStyle(.plain)
         .animation(ThemeAnimation.standardEase, value: isCompleted)
+        .onAppear {
+            // Reset checkmark scale in case view recycled
+            if isCompleted { checkmarkScale = 1.0 }
+        }
     }
 }
 

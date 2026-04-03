@@ -23,6 +23,8 @@ struct TodayView: View {
     @State private var rhythmToCheckIn: Rhythm?
     @State private var showingMilestone = false
     @State private var milestoneStreak: Int = 0
+    @State private var showingAllDoneCelebration = false
+    @State private var lastCelebrationDate: Date?
 
     // Filtered rhythms for the selected date
     private var todaysRhythms: [Rhythm] {
@@ -154,6 +156,10 @@ struct TodayView: View {
                 if showingMilestone {
                     StreakMilestoneOverlay(streak: milestoneStreak, isShowing: $showingMilestone)
                 }
+                if showingAllDoneCelebration {
+                    AllDoneCelebrationOverlay(isShowing: $showingAllDoneCelebration)
+                        .transition(.opacity)
+                }
             }
         }
     }
@@ -179,6 +185,18 @@ struct TodayView: View {
 
         hapticService.playSuccess()
         WidgetReloadService.rhythmCompletionChanged()
+
+        // Check if all rhythms are now done
+        let allComplete = totalCount > 0 && completedCount + 1 >= totalCount
+        if allComplete {
+            let alreadyCelebratedToday = lastCelebrationDate.map { Calendar.current.isDate($0, inSameDayAs: selectedDate) } ?? false
+            if !alreadyCelebratedToday {
+                lastCelebrationDate = selectedDate
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation { showingAllDoneCelebration = true }
+                }
+            }
+        }
 
         // Check for streak milestones
         let streak = rhythm.currentStreak
