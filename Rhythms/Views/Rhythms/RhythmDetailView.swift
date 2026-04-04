@@ -123,24 +123,55 @@ struct RhythmDetailView: View {
     // MARK: - Stats Overview
 
     private var statsOverview: some View {
-        HStack(spacing: ThemeSpacing.md) {
-            statCard(
-                title: "Current Streak",
-                value: "\(rhythm.currentStreak)",
-                icon: "flame.fill"
+        VStack(spacing: ThemeSpacing.sm) {
+            // Completion rate — shown prominently above the streak stats
+            let rate = rhythm.completionRate(forLast: 30)
+            VStack(spacing: ThemeSpacing.xs) {
+                Text("\(Int(rate * 100))%")
+                    .font(ThemeTypography.numericLarge)
+                    .foregroundStyle(completionRateColor(rate))
+                    .fontWeight(.bold)
+                Text("30-day completion rate")
+                    .font(ThemeTypography.caption)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(ThemeSpacing.md)
+            .background(ThemeColors.bgCard(colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.large))
+            .overlay(
+                RoundedRectangle(cornerRadius: ThemeRadius.large)
+                    .stroke(ThemeColors.borderSubtle(colorScheme), lineWidth: ThemeBorder.thin)
             )
 
-            statCard(
-                title: "Best Streak",
-                value: "\(rhythm.longestStreak)",
-                icon: "trophy.fill"
-            )
+            HStack(spacing: ThemeSpacing.md) {
+                statCard(
+                    title: "Current Streak",
+                    value: "\(rhythm.currentStreak)",
+                    icon: "flame.fill"
+                )
 
-            statCard(
-                title: "Total",
-                value: "\(rhythm.totalCompletions)",
-                icon: "checkmark.circle.fill"
-            )
+                statCard(
+                    title: "Best Streak",
+                    value: "\(rhythm.longestStreak)",
+                    icon: "trophy.fill"
+                )
+
+                statCard(
+                    title: "Total",
+                    value: "\(rhythm.totalCompletions)",
+                    icon: "checkmark.circle.fill"
+                )
+            }
+        }
+    }
+
+    private func completionRateColor(_ rate: Double) -> Color {
+        switch rate {
+        case 0.8...: return .green
+        case 0.6..<0.8: return ThemeColors.accentGold
+        case 0.4..<0.6: return .orange
+        default: return .red
         }
     }
 
