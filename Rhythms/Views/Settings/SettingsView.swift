@@ -15,6 +15,14 @@ struct SettingsView: View {
 
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("weekStartsOnMonday") private var weekStartsOnMonday = true
+    @AppStorage("allRemindersEnabled") private var allRemindersEnabled = true
+
+    // Default reminder time stored as seconds-since-midnight (AppStorage only supports primitives)
+    @AppStorage("defaultReminderTimeSeconds") private var defaultReminderTimeSeconds: Double = 9 * 3600
+
+    @State private var defaultReminderTime: Date = Calendar.current.date(
+        from: DateComponents(hour: 9, minute: 0)
+    ) ?? Date()
 
     @State private var showingAddCategory = false
     @State private var showingResetConfirmation = false
@@ -31,6 +39,39 @@ struct SettingsView: View {
                     Text("Sunday").tag(false)
                     Text("Monday").tag(true)
                 }
+            }
+
+            // Notifications Section
+            Section("Notifications") {
+                Toggle("Enable All Reminders", isOn: $allRemindersEnabled)
+                    .tint(ThemeColors.accentGold)
+
+                if allRemindersEnabled {
+                    DatePicker(
+                        "Default Reminder Time",
+                        selection: $defaultReminderTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .onChange(of: defaultReminderTime) { _, newTime in
+                        // Persist as seconds since midnight
+                        let components = Calendar.current.dateComponents([.hour, .minute], from: newTime)
+                        let seconds = Double((components.hour ?? 9) * 3600 + (components.minute ?? 0) * 60)
+                        defaultReminderTimeSeconds = seconds
+                    }
+
+                    Text("Individual reminders can be set per rhythm in the rhythm editor.")
+                        .font(.caption)
+                        .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                }
+            }
+            .onAppear {
+                // Restore default reminder time from AppStorage on appear
+                let totalSeconds = Int(defaultReminderTimeSeconds)
+                let hour = totalSeconds / 3600
+                let minute = (totalSeconds % 3600) / 60
+                defaultReminderTime = Calendar.current.date(
+                    from: DateComponents(hour: hour, minute: minute)
+                ) ?? defaultReminderTime
             }
 
             // Categories Section
