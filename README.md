@@ -93,6 +93,7 @@ Rhythms is a beautifully designed habit-tracking app for iPhone and iPad, built 
 │ • NotificationService (actor-based)  │
 │ • InsightsService (AI analytics)     │
 │ • WidgetReloadService                │
+│ • NoteParsingService                 │
 └──────────────────────────────────────┘
 ```
 
@@ -117,19 +118,25 @@ Rhythms/
 │   ├── Rhythms/               # List and editor
 │   ├── Insights/              # Analytics + calendar
 │   ├── Statistics/            # Trend graphs
-│   └── Settings/              # App configuration
+│   ├── Notes/                 # Note creation and management
+│   ├── Components/            # Shared UI components
+│   ├── Settings/              # App configuration
+│   └── Onboarding/            # First-launch tutorial
 │
-├── Services/ (4 files)
+├── Services/ (5 files)
 │   ├── HapticService.swift
 │   ├── NotificationService.swift
 │   ├── InsightsService.swift
-│   └── WidgetReloadService.swift
+│   ├── WidgetReloadService.swift
+│   └── NoteParsingService.swift
 │
-├── Theme/ (4 files)
+├── Theme/ (6 files)
 │   ├── RhythmsTheme.swift
 │   ├── ThemeColors.swift
 │   ├── ThemeTypography.swift
-│   └── ThemeSpacing.swift
+│   ├── ThemeSpacing.swift
+│   ├── ThemeModifiers.swift
+│   └── ThemeComponents.swift
 │
 └── Extensions/
     └── Date+Extensions.swift
