@@ -64,12 +64,17 @@ struct DailyProgressRing: View {
         }
         .padding(ThemeSpacing.md)
         .onAppear {
-            withAnimation(ThemeAnimation.smoothEase) {
+            withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) {
+                animatedProgress = displayProgress
+            }
+        }
+        .onChange(of: completedCount) { _, _ in
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 animatedProgress = displayProgress
             }
         }
         .onChange(of: progress) { _, newValue in
-            withAnimation(ThemeAnimation.smoothEase) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 animatedProgress = min(max(newValue, 0), 1)
             }
         }
