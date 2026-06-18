@@ -3,6 +3,7 @@
 //  Rhythms
 //
 //  Created by Cici on 2/19/26.
+//  Updated by Cici on 4/2/26 – asymmetric transitions, CTA spring, celebration on final step (TASK-RH-4)
 //
 
 import SwiftUI
@@ -28,10 +29,13 @@ struct OnboardingView: View {
     @State private var currentPage = 0
     @State private var hasRequestedNotifications = false
     @State private var pageOffset: CGFloat = 0
+    @State private var ctaScale: CGFloat = 1.0
+    @State private var showCelebration = false
 
     // Haptic generators
     private let pageHaptic = UIImpactFeedbackGenerator(style: .light)
     private let completionHaptic = UINotificationFeedbackGenerator()
+    private let celebrationHaptic = UINotificationFeedbackGenerator()
 
     private let pages: [OnboardingPage] = [
         OnboardingPage(
@@ -99,9 +103,26 @@ struct OnboardingView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.easeInOut, value: currentPage)
-                .onChange(of: currentPage) { _, _ in
+                .animation(.spring(response: 0.5, dampingFraction: 0.82), value: currentPage)
+                .onChange(of: currentPage) { oldValue, newValue in
                     pageHaptic.impactOccurred()
+                    // Celebrate on final step arrival
+                    if newValue == pages.count - 1 {
+                        celebrationHaptic.notificationOccurred(.success)
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            showCelebration = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            withAnimation { showCelebration = false }
+                        }
+                    } else {
+                        showCelebration = false
+                    }
+                    // Spring the CTA button into view on page change
+                    ctaScale = 0.92
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.6).delay(0.05)) {
+                        ctaScale = 1.0
+                    }
                 }
 
                 // Bottom controls
@@ -119,34 +140,44 @@ struct OnboardingView: View {
                     }
 
                     // CTA Button
-                    if currentPage == pages.count - 1 {
-                        // Notification permission + Get Started
-                        VStack(spacing: 12) {
-                            if !hasRequestedNotifications {
-                                Button {
-                                    requestNotifications()
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "bell.badge.fill")
-                                        Text("Enable Reminders")
+                    Group {
+                        if currentPage == pages.count - 1 {
+                            // Notification permission + Get Started
+                            VStack(spacing: 12) {
+                                if !hasRequestedNotifications {
+                                    Button {
+                                        requestNotifications()
+                                    } label: {
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "bell.badge.fill")
+                                            Text("Enable Reminders")
+                                        }
+                                        .font(ThemeTypography.labelLarge)
+                                        .foregroundStyle(ThemeColors.accentGold)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 16)
+                                        .background(ThemeColors.accentGold.opacity(0.12))
+                                        .clipShape(RoundedRectangle(cornerRadius: 14))
                                     }
-                                    .font(ThemeTypography.labelLarge)
-                                    .foregroundStyle(ThemeColors.accentGold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 16)
-                                    .background(ThemeColors.accentGold.opacity(0.12))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .buttonStyle(.plain)
+                                    .transition(.move(edge: .bottom).combined(with: .opacity))
                                 }
-                                .buttonStyle(.plain)
-                            }
 
-                            Button {
-                                completionHaptic.notificationOccurred(.success)
-                                withAnimation(.easeInOut(duration: 0.4)) {
-                                    isPresented = false
-                                }
-                            } label: {
-                                Text("Get Started")
+                                Button {
+                                    completionHaptic.notificationOccurred(.success)
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                        isPresented = false
+                                    }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        if showCelebration {
+                                            Text("🎉")
+                                        }
+                                        Text(showCelebration ? "Let's Go!" : "Get Started")
+                                        if !showCelebration {
+                                            Image(systemName: "arrow.right")
+                                        }
+                                    }
                                     .font(ThemeTypography.labelLarge)
                                     .foregroundStyle(
                                         colorScheme == .dark ? Color(hex: "#0c0c0c")! : Color.white
@@ -155,31 +186,34 @@ struct OnboardingView: View {
                                     .padding(.vertical, 16)
                                     .background(ThemeColors.accentGoldGradient)
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        } else {
+                            Button {
+                                pageHaptic.impactOccurred(intensity: 0.7)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                    currentPage += 1
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Text("Continue")
+                                    Image(systemName: "arrow.right")
+                                }
+                                .font(ThemeTypography.labelLarge)
+                                .foregroundStyle(
+                                    colorScheme == .dark ? Color(hex: "#0c0c0c")! : Color.white
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(ThemeColors.accentGoldGradient)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
                             .buttonStyle(.plain)
                         }
-                    } else {
-                        Button {
-                            pageHaptic.impactOccurred(intensity: 0.7)
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                currentPage += 1
-                            }
-                        } label: {
-                            HStack(spacing: 6) {
-                                Text("Continue")
-                                Image(systemName: "arrow.right")
-                            }
-                            .font(ThemeTypography.labelLarge)
-                            .foregroundStyle(
-                                colorScheme == .dark ? Color(hex: "#0c0c0c")! : Color.white
-                            )
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(ThemeColors.accentGoldGradient)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                        }
-                        .buttonStyle(.plain)
                     }
+                    .scaleEffect(ctaScale)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.6), value: ctaScale)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 40)
