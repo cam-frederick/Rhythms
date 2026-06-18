@@ -149,20 +149,38 @@ struct CalendarHeatMapView: View {
     // MARK: - Legend
 
     private var legend: some View {
-        HStack(spacing: ThemeSpacing.xs) {
+        // Level-based color legend: 0 = no completions, 3 = full completions
+        HStack(spacing: 12) {
             Text("Less")
-                .font(ThemeTypography.caption)
+                .font(.caption)
                 .foregroundStyle(ThemeColors.textMuted(colorScheme))
 
-            ForEach([0.0, 0.1, 0.3, 0.6, 0.8, 1.0], id: \.self) { value in
-                RoundedRectangle(cornerRadius: ThemeRadius.small)
-                    .fill(heatColor(for: value))
-                    .frame(width: 14, height: 14)
+            ForEach(0...3, id: \.self) { level in
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(heatmapColor(level: level))
+                    .frame(width: 16, height: 16)
             }
 
             Text("More")
-                .font(ThemeTypography.caption)
+                .font(.caption)
                 .foregroundStyle(ThemeColors.textMuted(colorScheme))
+        }
+        .font(.caption)
+        .foregroundStyle(ThemeColors.textMuted(colorScheme))
+    }
+
+    /// Maps an integer level (0–3) to the heatmap color scale.
+    /// Matches the color scale used by heatColor(for:).
+    private func heatmapColor(level: Int) -> Color {
+        switch level {
+        case 0:
+            return ThemeColors.bgSecondary(colorScheme)
+        case 1:
+            return ThemeColors.accentGold.opacity(0.3)
+        case 2:
+            return ThemeColors.accentGold.opacity(0.55)
+        default: // 3+
+            return ThemeColors.accentGold.opacity(0.9)
         }
     }
 
