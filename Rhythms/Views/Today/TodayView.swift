@@ -91,7 +91,13 @@ struct TodayView: View {
                             )
                         }
 
-                        // Empty state
+                        // All done state — all rhythms completed
+                        if !todaysRhythms.isEmpty && incompleteRhythms.isEmpty {
+                            AllDoneView()
+                                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        }
+
+                        // Empty state — no rhythms at all
                         if todaysRhythms.isEmpty {
                             EmptyTodayView(
                                 selectedDate: selectedDate,
@@ -292,34 +298,96 @@ struct EmptyTodayView: View {
     let selectedDate: Date
     let onAddTap: () -> Void
 
+    @State private var appeared = false
+
     private var isPastDate: Bool {
         selectedDate.isPast
     }
 
     var body: some View {
-        VStack(spacing: ThemeSpacing.md) {
+        VStack(spacing: ThemeSpacing.lg) {
             Image(systemName: isPastDate ? "calendar" : "leaf.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(isPastDate ? ThemeColors.textMuted(colorScheme) : ThemeColors.accentGold.opacity(0.7))
+                .font(.system(size: 56))
+                .foregroundStyle(isPastDate ? ThemeColors.textMuted(colorScheme) : ThemeColors.accentGold.opacity(0.75))
+                .scaleEffect(appeared ? 1 : 0.7)
+                .opacity(appeared ? 1 : 0)
+                .animation(.spring(response: 0.5, dampingFraction: 0.65), value: appeared)
 
-            Text("No rhythms scheduled")
-                .font(ThemeTypography.titleMedium)
-                .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+            VStack(spacing: ThemeSpacing.sm) {
+                Text(isPastDate ? "Rest day" : "Nothing scheduled")
+                    .font(ThemeTypography.titleMedium)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.3).delay(0.1), value: appeared)
 
-            Text(isPastDate
-                 ? "No rhythms were scheduled for this day"
-                 : "Add a rhythm to start tracking your daily routines")
-                .font(ThemeTypography.bodyMedium)
-                .foregroundStyle(ThemeColors.textSecondary(colorScheme))
-                .multilineTextAlignment(.center)
+                Text(isPastDate
+                     ? "No rhythms were scheduled for this day."
+                     : "Add a rhythm to start building better daily habits.")
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                    .multilineTextAlignment(.center)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.3).delay(0.18), value: appeared)
+            }
 
             if !isPastDate {
                 GoldButton("Add Rhythm", icon: "plus.circle.fill", action: onAddTap)
-                    .padding(.top, ThemeSpacing.sm)
+                    .padding(.top, ThemeSpacing.xs)
                     .frame(maxWidth: 200)
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 12)
+                    .animation(.spring(response: 0.45, dampingFraction: 0.75).delay(0.25), value: appeared)
             }
         }
         .padding(ThemeSpacing.xl)
+        .onAppear { appeared = true }
+        .onChange(of: selectedDate) { _, _ in
+            appeared = false
+            withAnimation { appeared = true }
+        }
+    }
+}
+
+// MARK: - All Done View
+
+struct AllDoneView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    @State private var appeared = false
+
+    var body: some View {
+        VStack(spacing: ThemeSpacing.lg) {
+            // Trophy
+            ZStack {
+                Circle()
+                    .fill(ThemeColors.accentGold.opacity(0.12))
+                    .frame(width: 90, height: 90)
+
+                Text("🏆")
+                    .font(.system(size: 48))
+            }
+            .scaleEffect(appeared ? 1 : 0.6)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
+
+            VStack(spacing: ThemeSpacing.sm) {
+                Text("You're all done!")
+                    .font(ThemeTypography.titleMedium)
+                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.3).delay(0.12), value: appeared)
+
+                Text("Every rhythm completed.\nYou showed up today — that's what matters. 🔥")
+                    .font(ThemeTypography.bodyMedium)
+                    .foregroundStyle(ThemeColors.textSecondary(colorScheme))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.3).delay(0.2), value: appeared)
+            }
+        }
+        .padding(ThemeSpacing.xl)
+        .onAppear { appeared = true }
     }
 }
 
