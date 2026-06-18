@@ -15,7 +15,7 @@ struct TodayView: View {
 
     @Query(
         filter: #Predicate<Rhythm> { !$0.isArchived && !$0.isPaused },
-        sort: \Rhythm.createdAt
+        sort: [SortDescriptor(\Rhythm.sortOrder), SortDescriptor(\Rhythm.createdAt)]
     ) private var allRhythms: [Rhythm]
 
     @State private var selectedDate: Date = Date()
@@ -76,7 +76,8 @@ struct TodayView: View {
                                 title: "To Do",
                                 rhythms: incompleteRhythms,
                                 selectedDate: selectedDate,
-                                onToggle: toggleCompletion
+                                onToggle: toggleCompletion,
+                                reorderable: true
                             )
                         }
 
@@ -256,6 +257,7 @@ struct DateSelectorView: View {
 // MARK: - Rhythm Section
 
 struct RhythmSection: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
 
     let title: String
@@ -263,13 +265,24 @@ struct RhythmSection: View {
     let selectedDate: Date
     let onToggle: (Rhythm) -> Void
     var isCompleted: Bool = false
+    /// Whether this section allows drag-to-reorder
+    var reorderable: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.sm) {
-            Text(title.uppercased())
-                .font(ThemeTypography.sectionLabel)
-                .tracking(ThemeTypography.sectionLabelTracking)
-                .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textSecondary(colorScheme))
+            HStack(spacing: ThemeSpacing.xs) {
+                Text(title.uppercased())
+                    .font(ThemeTypography.sectionLabel)
+                    .tracking(ThemeTypography.sectionLabelTracking)
+                    .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textSecondary(colorScheme))
+
+                if reorderable && rhythms.count > 1 {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.caption2)
+                        .foregroundStyle(ThemeColors.textMuted(colorScheme).opacity(0.6))
+                        .padding(.leading, 4)
+                }
+            }
 
             VStack(spacing: ThemeSpacing.sm) {
                 ForEach(rhythms, id: \.id) { rhythm in
@@ -278,8 +291,63 @@ struct RhythmSection: View {
                         selectedDate: selectedDate,
                         onToggle: { onToggle(rhythm) }
                     )
+                    // Long-press drag handle hint (only on reorderable section)
+                    .if(reorderable) { view in
+                        view.draggable(rhythm.id.uuidString) {
+                            // Drag preview
+                            HStack {
+                                Text(rhythm.emoji)
+                                Text(rhythm.title)
+                                    .font(ThemeTypography.titleSmall)
+                                    .foregroundStyle(ThemeColors.textPrimary(colorScheme))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(ThemeColors.bgCard(colorScheme))
+                            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.medium))
+                            .shadow(radius: 6)
+                        }
+                        .dropDestination(for: String.self) { droppedIds, _ in
+                            guard let droppedIdString = droppedIds.first,
+                                  let droppedId = UUID(uuidString: droppedIdString),
+                                  let targetIdx = rhythms.firstIndex(where: { $0.id == rhythm.id }),
+                                  let sourceIdx = rhythms.firstIndex(where: { $0.id == droppedId }),
+                                  sourceIdx != targetIdx else {
+                                return false
+                            }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                reorderRhythms(from: sourceIdx, to: targetIdx, in: rhythms)
+                            }
+                            return true
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private func reorderRhythms(from source: Int, to target: Int, in rhythms: [Rhythm]) {
+        // Assign new sortOrder values based on the reordered list
+        var reordered = rhythms
+        let moved = reordered.remove(at: source)
+        reordered.insert(moved, at: target)
+
+        for (index, rhythm) in reordered.enumerated() {
+            rhythm.sortOrder = index
+        }
+        try? modelContext.save()
+    }
+}
+
+// MARK: - View modifier helper
+
+extension View {
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
