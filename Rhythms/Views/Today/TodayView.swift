@@ -296,19 +296,25 @@ struct EmptyTodayView: View {
         selectedDate.isPast
     }
 
+    private var isFutureDate: Bool {
+        !selectedDate.isToday && !selectedDate.isPast
+    }
+
     var body: some View {
         VStack(spacing: ThemeSpacing.md) {
-            Image(systemName: isPastDate ? "calendar" : "leaf.fill")
+            Image(systemName: isPastDate ? "calendar.badge.checkmark" : isFutureDate ? "calendar.badge.plus" : "leaf.fill")
                 .font(.system(size: 50))
                 .foregroundStyle(isPastDate ? ThemeColors.textMuted(colorScheme) : ThemeColors.accentGold.opacity(0.7))
 
-            Text("No rhythms scheduled")
+            Text(isPastDate ? "Rest day" : isFutureDate ? "Nothing scheduled yet" : "Start your first rhythm")
                 .font(ThemeTypography.titleMedium)
                 .foregroundStyle(ThemeColors.textPrimary(colorScheme))
 
             Text(isPastDate
-                 ? "No rhythms were scheduled for this day"
-                 : "Add a rhythm to start tracking your daily routines")
+                 ? "No rhythms were scheduled for this day. Every great streak starts fresh."
+                 : isFutureDate
+                 ? "Plan ahead by adding rhythms you want to build into your day."
+                 : "Small habits, done daily, become the life you want. Add your first rhythm to begin.")
                 .font(ThemeTypography.bodyMedium)
                 .foregroundStyle(ThemeColors.textSecondary(colorScheme))
                 .multilineTextAlignment(.center)
