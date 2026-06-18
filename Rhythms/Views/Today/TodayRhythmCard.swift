@@ -14,8 +14,15 @@ struct TodayRhythmCard: View {
     let selectedDate: Date
     let onToggle: () -> Void
 
+    @State private var checkmarkScale: CGFloat = 1.0
+    @State private var celebrationOpacity: Double = 0
+
     private var isCompleted: Bool {
         rhythm.isCompleted(on: selectedDate)
+    }
+
+    private var isMissed: Bool {
+        selectedDate.isPast && !selectedDate.isToday && !isCompleted
     }
 
     private var todaysNote: RhythmNote? {
@@ -23,7 +30,25 @@ struct TodayRhythmCard: View {
     }
 
     var body: some View {
-        Button(action: onToggle) {
+        Button(action: {
+            onToggle()
+            if !isCompleted {
+                // Trigger spring pop when completing (will appear completed after toggle)
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
+                    checkmarkScale = 1.4
+                }
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.55).delay(0.1)) {
+                    checkmarkScale = 1.0
+                }
+                // Brief celebration sparkle
+                withAnimation(.easeOut(duration: 0.15)) {
+                    celebrationOpacity = 1
+                }
+                withAnimation(.easeOut(duration: 0.5).delay(0.15)) {
+                    celebrationOpacity = 0
+                }
+            }
+        }) {
             HStack(spacing: ThemeSpacing.md) {
                 // Completion checkbox
                 ZStack {
@@ -35,11 +60,20 @@ struct TodayRhythmCard: View {
                         Circle()
                             .fill(rhythm.color)
                             .frame(width: 28, height: 28)
+                            .scaleEffect(checkmarkScale)
 
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(colorScheme == .dark ? .black : .white)
+                            .scaleEffect(checkmarkScale)
                     }
+
+                    // Sparkle overlay on completion
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 22))
+                        .foregroundStyle(rhythm.color)
+                        .opacity(celebrationOpacity)
+                        .scaleEffect(celebrationOpacity == 1 ? 1.2 : 0.8)
                 }
 
                 // Rhythm info
@@ -47,11 +81,29 @@ struct TodayRhythmCard: View {
                     HStack(spacing: ThemeSpacing.sm) {
                         Text(rhythm.emoji)
                             .font(.title3)
+                            .opacity(isMissed ? 0.5 : 1.0)
 
                         Text(rhythm.title)
                             .font(ThemeTypography.titleSmall)
-                            .foregroundStyle(isCompleted ? ThemeColors.textMuted(colorScheme) : ThemeColors.textPrimary(colorScheme))
+                            .foregroundStyle(
+                                isCompleted ? ThemeColors.textMuted(colorScheme) :
+                                isMissed ? ThemeColors.textMuted(colorScheme) :
+                                ThemeColors.textPrimary(colorScheme)
+                            )
                             .strikethrough(isCompleted, color: ThemeColors.textMuted(colorScheme))
+
+                        // Missed badge — small pill shown when past-day rhythm was skipped
+                        if isMissed {
+                            Text("Missed")
+                                .font(ThemeTypography.caption)
+                                .foregroundStyle(ThemeColors.textMuted(colorScheme))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule()
+                                        .fill(ThemeColors.bgSecondary(colorScheme))
+                                )
+                        }
                     }
 
                     // Show today's note if available
@@ -62,8 +114,8 @@ struct TodayRhythmCard: View {
                             .lineLimit(2)
                     }
 
-                    // Streak badge
-                    if rhythm.currentStreak > 0 {
+                    // Streak badge — only show for current/future day rhythms to avoid confusion
+                    if rhythm.currentStreak > 0 && !isMissed {
                         HStack(spacing: ThemeSpacing.xs) {
                             Image(systemName: "flame.fill")
                                 .font(ThemeTypography.caption)
@@ -91,18 +143,21 @@ struct TodayRhythmCard: View {
             .overlay(
                 RoundedRectangle(cornerRadius: ThemeRadius.large)
                     .stroke(
-                        isCompleted ? rhythm.color.opacity(0.3) : ThemeColors.borderSubtle(colorScheme),
+                        isCompleted ? rhythm.color.opacity(0.3) :
+                        isMissed ? ThemeColors.borderSubtle(colorScheme).opacity(0.5) :
+                        ThemeColors.borderSubtle(colorScheme),
                         lineWidth: ThemeBorder.thin
                     )
             )
+            .opacity(isMissed ? 0.7 : 1.0)
             .shadow(
-                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted ? 0 : 0.04),
-                radius: isCompleted ? 0 : 6,
-                y: isCompleted ? 0 : 2
+                color: colorScheme == .dark ? .clear : .black.opacity(isCompleted || isMissed ? 0 : 0.04),
+                radius: isCompleted || isMissed ? 0 : 6,
+                y: isCompleted || isMissed ? 0 : 2
             )
         }
         .buttonStyle(.plain)
-        .animation(ThemeAnimation.standardEase, value: isCompleted)
+        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isCompleted)
     }
 }
 
