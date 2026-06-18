@@ -64,12 +64,14 @@ struct DailyProgressRing: View {
         }
         .padding(ThemeSpacing.md)
         .onAppear {
-            withAnimation(ThemeAnimation.smoothEase) {
+            withAnimation(ThemeAnimation.refinedSpring) {
                 animatedProgress = displayProgress
             }
         }
         .onChange(of: progress) { _, newValue in
-            withAnimation(ThemeAnimation.smoothEase) {
+            // Use a spring animation so the ring has a satisfying bounce when
+            // the user checks off a rhythm and the percentage jumps up.
+            withAnimation(ThemeAnimation.refinedSpring) {
                 animatedProgress = min(max(newValue, 0), 1)
             }
         }
